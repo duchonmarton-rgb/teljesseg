@@ -1,0 +1,384 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{lmodern}
+\usepackage{microtype}
+\frenchspacing
+\linespread{1.25}
+
+\usepackage{amsmath,amsfonts,amssymb,mathtools}
+\usepackage{amsthm}
+
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink]{cleveref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definíció}[section]
+\newenvironment{biz}{\par\noindent\textbf{Bizonyítás.}\enspace\ignorespaces}
+{\hfill$\square$\par}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Tétel}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Következmény}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Megjegyzés}
+
+\newcommand{\Homcont}{\mathrm{Hom}^{\mathrm{cont}}_k}
+\newcommand{\res}{\mathrm{res}}
+\newcommand{\End}{\mathrm{End}}
+\newcommand{\Res}{\mathrm{Res}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cA}{\mathbb{A}}
+\newcommand{\cOcA}{\widehat{\mathcal{O}}}
+\newcommand{\pp}{\mathfrak{p}}
+
+\begin{document}
+\title{A globális reziduumtétel}
+\date{}
+\maketitle
+\begin{center}
+{\Large Jegyzet}
+\end{center}
+
+\section{Véges potens endomorfizmusok nyoma}
+
+Legyen $k$ test, $V$ pedig $k$-vektortér.
+
+\begin{definition}
+Egy $\theta\in \End_k(V)$ endomorfizmust \emph{véges potensnek} nevezünk, ha létezik olyan $n\ge 1$, hogy $\theta^n(V)$ véges dimenziós $k$-vektortér.
+\end{definition}
+
+\begin{lemma}[A nyom létezése és egyértelműsége]
+\label{lem:trace}
+Létezik egyetlen hozzárendelés
+\[
+\Tr_V : \{\text{véges potens endomorfizmusok}\}\longrightarrow k,
+\]
+amelyre a következők teljesülnek:
+\begin{enumerate}
+\item[(T1)] Ha $\dim_k V<\infty$, akkor $\Tr_V(\theta)$ a szokásos nyom.
+\item[(T2)] Ha $W\subset V$ $\theta$-invariáns altér, akkor
+\[
+\Tr_V(\theta)=\Tr_W(\theta|_W)+\Tr_{V/W}(\overline{\theta}).
+\]
+\item[(T3)] Ha $\theta$ nilpotens, akkor $\Tr_V(\theta)=0$.
+\end{enumerate}
+\end{lemma}
+
+\begin{biz}
+Legyen $\theta$ véges potens. Ekkor van olyan $n\ge 1$, hogy
+\[
+U:=\theta^n(V)
+\]
+véges dimenziós. Mivel $\theta(U)\subset U$, az $\theta|_U$ korlátozás véges dimenziós endomorfizmus, ezért a szokásos nyom értelmezett. Definiáljuk:
+\[
+\Tr_V(\theta):=\Tr_U(\theta|_U).
+\]
+
+Meg kell mutatni, hogy ez nem függ az $n$ választásától. Ha $U_1=\theta^{n_1}(V)$ és $U_2=\theta^{n_2}(V)$ két ilyen választás, akkor legyen
+\[
+W:=U_1+U_2.
+\]
+Ekkor $W$ is véges dimenziós és $\theta$-invariáns. Továbbá valamely $m$ mellett
+\[
+\theta^m(W)\subset \theta^m(V)\subset U_1.
+\]
+Ezért az indukált operátor a $W/U_1$ hányadoson nilpotens, így véges dimenzióban a nyoma zérus. A nyom additivitása miatt
+\[
+\Tr_W(\theta|_W)=\Tr_{U_1}(\theta|_{U_1})+\Tr_{W/U_1}(\overline{\theta})
+=\Tr_{U_1}(\theta|_{U_1}).
+\]
+Ugyanígy $\Tr_W(\theta|_W)=\Tr_{U_2}(\theta|_{U_2})$, tehát a definíció független a választástól.
+
+A (T1) tulajdonság nyilvánvaló, mert ha $\dim_k V<\infty$, akkor választhatjuk $U=V$-t. A (T3) is következik, mert ha $\theta$ nilpotens, akkor valamely $n$-re $\theta^n=0$, így $U=0$ is választható.
+
+Az (T2) tulajdonságot ugyanebből az additivitásból kapjuk: ha $W\subset V$ $\theta$-invariáns, válasszunk olyan $U\subset V$ véges dimenziós $\theta$-invariáns alteret, hogy $\theta^n(V)\subset U$ teljesüljön valamilyen $n$-re. Ekkor $U\cap W$ véges dimenziós és $\theta$-invariáns a $W$-ben, továbbá $(U+W)/W$ véges dimenziós és $\overline{\theta}$-invariáns a $V/W$-ben. A véges dimenziós nyom additivitása miatt
+\[
+\Tr_U(\theta|_U)
+=
+\Tr_{U\cap W}(\theta|_{U\cap W})
++
+\Tr_{(U+W)/W}(\overline{\theta}),
+\]
+és ez éppen
+\[
+\Tr_W(\theta|_W)+\Tr_{V/W}(\overline{\theta}).
+\]
+
+Az egyértelműség abból következik, hogy bármely más, (T1)–(T3)-at kielégítő hozzárendelés ugyanígy a választott véges dimenziós invariáns altéren a szokásos nyommal egyezik.
+\end{biz}
+
+\begin{remark}
+A véges potens operátorok nyoma a szokásos nyomhoz hasonlóan viselkedik. Speciálisan, ha $\theta$ idempotens és véges potens, akkor $\Tr_V(\theta)=\dim_k(\theta V)$.
+\end{remark}
+\section{Lokális reziduum és nyom}
+
+Legyen $k$ test, $V$ pedig $k$-vektortér, és rögzítsünk egy $A\subset V$ $k$-alteret. Az alábbi jelölést használjuk:
+\[
+A<B \quad\Longleftrightarrow\quad (A+B)/B \text{ véges dimenziós } k\text{-vektortér}.
+\]
+Két alteret \emph{ugyanannak a méretűnek} nevezünk, és $A\sim B$-vel jelölünk, ha $A<B$ és $B<A$.
+
+\begin{definition}
+Az $A\subset V$ altérhez definiáljuk az $E,E_1,E_2,E_0\subset \End_k(V)$ részhalmazokat a következőképpen:
+\[
+E=\{\theta\in\End_k(V):\theta A<A\},
+\]
+\[
+E_1=\{\theta\in\End_k(V):\theta V<A\},
+\]
+\[
+E_2=\{\theta\in\End_k(V):\theta A<0\},
+\]
+\[
+E_0=E_1\cap E_2.
+\]
+Itt $\theta A<0$ azt jelenti, hogy $\theta(A)$ véges dimenziós.
+\end{definition}
+
+\begin{lemma}[Tate]
+$E$ $k$-algebra, az $E_1$ és $E_2$ kétoldali ideálok $E$-ben, továbbá
+\[
+E_1+E_2=E,\qquad E_1\cap E_2=E_0,
+\]
+és $E_0$ véges potens.
+\end{lemma}
+
+\begin{biz}
+Az $E$ algebrai tulajdonságai közvetlenül a definícióból következnek. Válasszunk egy $k$-lineáris projekciót $\pi:V\to A$. Ekkor minden $\theta\in E$ esetén
+\[
+\theta=\theta\pi+\theta(1-\pi).
+\]
+Itt $\theta\pi\in E_1$, mert $(\theta\pi)V=\theta(A)<A$, és $\theta(1-\pi)\in E_2$, mert $(\theta(1-\pi))A=0$ véges dimenziós. Ezért $E_1+E_2=E$.
+
+Ha $\theta\in E_0$, akkor $\theta V\subseteq A+F$ valamely véges dimenziós $F$ mellett, továbbá $\theta A$ véges dimenziós. Így
+\[
+\theta^2(V)\subseteq \theta(A+F)=\theta A+\theta F
+\]
+véges dimenziós, tehát $\theta$ véges potens.
+\end{biz}
+
+\begin{theorem}[A reziduum definíciója]
+\label{thm:abstract_residue}
+Tegyük fel, hogy $K$ kommutatív $k$-algebra egységelemmel, $V$ $K$-modulus, és $A\subset V$ olyan $k$-altér, hogy $fA<A$ minden $f\in K$ esetén. Ekkor létezik egyetlen $k$-lineáris leképezés
+\[
+\Res_A:\Omega^1_{K/k}\longrightarrow k
+\]
+amelyre minden $f,g\in K$ esetén
+\[
+\Res_A(f\,dg)=\Tr_V([\tilde f,\tilde g]),
+\]
+
+ahol $\tilde f,\tilde g\in E$ az $f,g$-nek megfelelő reprezentánsok oly módon választva, hogy
+\[
+\tilde f\in E_1,\qquad \tilde g\in E_2
+\]
+
+\end{theorem}
+
+\begin{biz}
+Mivel $E=E_1+E_2$, az ilyen $\tilde f,\tilde g$ mindig választhatók. Ekkor $[\tilde f,\tilde g]\in E_0$, ezért a nyom definiált.
+Ha $\tilde f$-et vagy $\tilde g$-t $E_2$ egy elemével módosítjuk, a kapott kommutátor nyoma nem változik, mert az $E_1$ és $E_2$ elemeinek kommutátora $E_0$-ban van, és annak nyoma zérus.
+A $K$-beli elemekhez tartozó alakokra így kapott leképezés a szokásos $f\,dg$ relációk miatt tényleg jól definiált, és a linearitás az $E_0$-beli nyom linearitásából adódik.
+Az egyértelműség abból következik, hogy $\Omega^1_{K/k}$-t ezek az elemek generálják.
+\end{biz}
+
+\begin{definition}
+Ha $X$ sima projektív görbe $k$ fölött, $K=k(X)$, és $p\in X$ zárt pont, akkor a hozzá tartozó lokális reziduumot a
+\[
+\Res_p:\Omega_{K/k}\to k
+\]
+leképezésként értjük, amely a fenti absztrakt reziduum specializációja $V=K_p$ és $A=\cO_p$ esetén.
+\end{definition}
+
+\begin{theorem}
+Legyen $p\in X$ $k$-racionális pont, és válasszunk lokális paramétert $t$-t $p$-ben, úgy hogy
+\[
+\cO_p\simeq k[[t]],\qquad K_p\simeq k((t)).
+\]
+Ha
+\[
+f=\sum_{i\gg-\infty} a_i t^i,\qquad g=\sum_{j\gg-\infty} b_j t^j,
+\]
+akkor
+\[
+\Res_p(f\,dg)
+\]
+a $f(t)g'(t)\,dt$ alakban a $t^{-1}$ tag együtthatója, vagyis
+\[
+\Res_p(f\,dg)=\sum_{i+j=0} j\,a_i b_j.
+\]
+\end{theorem}
+
+\begin{biz}
+Mivel $dg=g'(t)\,dt$, ezért
+\[
+f\,dg=f(t)g'(t)\,dt.
+\]
+A reziduum definíciója szerint ennek pontosan a $t^{-1}dt$ együtthatóját kell venni. A deriválás miatt csak azok a tagok járulnak hozzá, amelyek kitevője együtt $0$-at ad, tehát éppen a fenti összeg.
+\end{biz}
+\section{Globális reziduum az adélgyűrűn}
+
+Legyen $X$ összefüggő, reguláris, projektív görbe $k$ fölött, és jelölje $K=k(X)$ a függvénytestet. A $p\in X$ zárt pontok az $K$-beli, $k$-t tartalmazó diszkrét értékelési gyűrűkkel azonosulnak. Írjuk $K_p$-t a $p$-hez tartozó teljes lokális testre és $\cO_p$-t az értékelési gyűrűre.
+
+Legyen $S$ a $X$ zárt pontjainak tetszőleges halmaza, és legyen
+\[
+V_S=\prod\nolimits_{p\in S}' K_p,\qquad A_S=\prod_{p\in S}\cO_p,
+\]
+ahol a szorzat a megszorított szorzatot jelöli. A $K$ testet diagonálisan ágyazzuk be $V_S$-be.
+
+\begin{theorem}[A reziduum összege]
+\label{thm:global_residue_S}
+Legyen $X$ összefüggő, reguláris, projektív görbe $k$ fölött, és $K=k(X)$.
+Minden $\omega\in\Omega_{K/k}$ esetén
+\[
+\sum_{p\in X}\Res_p(\omega)=0.
+\]
+Ekvivalensen, ha $S$ a zárt pontok egy részhalmaza, akkor
+\[
+\sum_{p\in S}\Res_p(\omega)=\Res_{A_S}(\omega),
+\]
+és az összegben csak véges sok nemzérus tag szerepel.
+\end{theorem}
+
+\begin{biz}
+Legyen $\omega=f\,dg$. Először vegyünk egy véges $S'\subset S$ részhalmazt, amely tartalmazza $f$ és $g$ összes pólusát. Ekkor minden $p\in S\setminus S'$ esetén $\Res_p(\omega)=0$, tehát elegendő a véges halmazra vonatkozó állítást bizonyítani.
+
+Ha $S$ véges, akkor Tate adèle-os felállásában
+\[
+V_S=\prod_{p\in S}' K_p,\qquad A_S=\prod_{p\in S}\mathcal O_p,
+\]
+és a diagonális beágyazással együtt a megfelelő altér-lánc argumentum alkalmazható. Tate Theorem 3-a szerint ekkor
+\[
+\Res_{A_S}(\omega)=\sum_{p\in S}\Res_p(\omega),
+\]
+ahol csak véges sok tag lehet nemzérus.
+
+Most vegyük $S=X$-et. Az előzőek szerint $\Res_{A_X}(\omega)=\sum_{p\in X}\Res_p(\omega)$. 
+A globális reziduum eltűnéséhez azt kell belátnunk, hogy $\Res_{A_X}(\omega)=0$. 
+Tate idevágó tétele (Theorem 4) ezt a properitás felhasználásával igazolja: mivel $X$ projektív, a 
+$H^1(X,\cO_X)$ kohomológiacsoport véges dimenziós $k$ fölött, és $V_X/(K+A_X)\cong H^1(X,\cO_X)$. 
+Az absztrakt reziduum láncszabályából és abból, hogy $K\cap A_X=\cO(X)$ véges dimenziós, levezethető $\Res_{A_X}=0$. 
+(A részletes érvelés megtalálható Tate klasszikus dolgozatában; a jegyzet keretei között megelégszünk a hivatkozással.)
+
+Ezzel a kívánt $\sum_{p\in X}\Res_p(\omega)=0$ összefüggést kapjuk.
+\end{biz}
+
+\begin{corollary}
+\label{cor:sum_zero}
+Minden $\omega\in\Omega_{K/k}$ esetén
+\[
+\sum_{p\in X}\Res_p(\omega)=0.
+\]
+\end{corollary}
+
+\begin{biz}
+Azonnal következik az előző tételből $S=X$ választással.
+\end{biz}
+\section{Véges bővítések és a reziduum}
+
+Legyen $X'\to X$ egy szurjektív morfizmus sima, projektív görbék között, és jelölje
+\[
+K'=k(X'),\qquad K=k(X)
+\]
+a megfelelő függvénytesteket, ahol $K\subset K'$.
+
+\begin{theorem}[Nyomkompatibilitás véges bővítésnél]
+\label{thm:trace_compat}
+Legyen $X'\to X$ egy szurjektív morfizmus sima, projektív görbék között, és jelölje
+\[
+K'=k(X'),\qquad K=k(X)
+\]
+a megfelelő függvénytesteket, ahol $K\subset K'$.
+
+Legyen $p\in X$ zárt pont, és tegyük fel, hogy $f\in K'$ és $g\in K$.
+Ekkor
+\[
+\sum_{p'\mid p}\Res_{p'}(f\,dg)
+=
+\Res_p\bigl((\Tr_{K'/K}f)\,dg\bigr).
+\]
+Ezzel ekvivalensen, ha $p'\in X'$ képe $p\in X$, akkor
+\[
+\Res_{p'}(f\,dg)=\Res_p\bigl((\Tr_{K'_{p'}/K_p}f)\,dg\bigr).
+\]
+\end{theorem}
+
+\begin{biz}
+Tate Theorem 4-a szerint a reziduum kompatibilis a véges bővítések nyomával. A lokális változatban a teljes lokális testekre és az értékelési gyűrűkre alkalmazzuk a tételt; ekkor a lokális nyom és a reziduum felcserélhető.
+
+A globális állítást úgy kapjuk meg, hogy a lokális azonosságot az összes $p'\mid p$ pontra összegezzük. A testnyom lokális nyomokra bontása miatt
+\[
+\Tr_{K'/K}f=\sum_{p'\mid p}\Tr_{K'_{p'}/K_p}f,
+\]
+így a reziduum linearitása adja a kívánt azonosságot.
+\end{biz}
+\section{A projektív egyenes esete}
+
+Tekintsük a $\mathbb{P}^1_k$ projektív egyenest, és tegyük fel egyszerűség kedvéért, hogy $k$ algebraikusan zárt. Ekkor a racionális függvények teste $K=k(t)$, a differenciálformák tere pedig $\Omega_{K/k}=K\,dt$. A zárt pontok a $k\cup\{\infty\}$ halmaz elemei, és minden véges $a\in k$ pontban a lokális paraméter $t-a$, míg az $\infty$ pontban a lokális paraméter $u=1/t$.
+
+\begin{lemma}
+\label{lem:P1}
+Minden $\omega\in\Omega_{k(t)/k}$ differenciálformára
+\[
+\sum_{p\in\mathbb{P}^1_k} \Res_p(\omega)=0.
+\]
+\end{lemma}
+
+\begin{biz}
+Legyen $\omega=f(t)\,dt$, ahol $f(t)\in k(t)$. Írjuk fel $f$-et parciális törtek összegeként:
+\[
+f(t)=q(t)+\sum_{a\in k}\sum_{j=1}^{n_a}\frac{c_{a,j}}{(t-a)^j},
+\]
+ahol $q(t)\in k[t]$ polinom, és az együtthatók $c_{a,j}\in k$.
+
+Minden véges $a\in k$ pontban a reziduum definíció szerint
+\[
+\Res_{t=a}\bigl(f(t)\,dt\bigr)=c_{a,1}.
+\]
+
+Az $\infty$ pontnál áttérünk az $u=1/t$ lokális paraméterre. Ekkor $t=1/u$ és $dt=-u^{-2}du$, tehát
+\[
+\omega=f(1/u)\cdot(-u^{-2}du).
+\]
+A parciális törtek behelyettesítésével
+\[
+f(1/u)=q(1/u)+\sum_{a\in k}\sum_{j=1}^{n_a}c_{a,j}\,\frac{1}{(1/u-a)^j}
+      =q(1/u)+\sum_{a\in k}\sum_{j=1}^{n_a} c_{a,j}\,u^j(1-au)^{-j}.
+\]
+Ezért
+\[
+\omega
+=
+-\Bigl(q(1/u)+\sum_{a\in k}\sum_{j=1}^{n_a} c_{a,j}\,u^j(1-au)^{-j}\Bigr)u^{-2}du.
+\]
+
+A reziduum a $du$ melletti $u^{-1}$-es együttható. A polinomrészből származó tagokban ilyen nincs, mert $q(1/u)u^{-2}$ csak $u^{-2}$-nél kisebb kitevőket ad.
+
+A törtes részben
+\[
+(1-au)^{-j}=\sum_{m=0}^{\infty}\binom{j+m-1}{m}(au)^m.
+\]
+Ekkor a
+\[
+-c_{a,j}\,u^{j-2}(1-au)^{-j}
+\]
+tagban az $u$ kitevője $j-2+m$. Az $u^{-1}$-es taghoz $j-2+m=-1$, azaz $m=1-j$ kellene, ami csak $j=1$ esetén lehetséges, ekkor $m=0$. Így
+\[
+\Res_\infty(\omega)=-\sum_{a\in k}c_{a,1}.
+\]
+
+Összegezve:
+\[
+\sum_{p\in\mathbb{P}^1_k}\Res_p(\omega)
+=
+\sum_{a\in k}\Res_{t=a}(\omega)+\Res_\infty(\omega)
+=
+\sum_{a\in k}c_{a,1}-\sum_{a\in k}c_{a,1}
+=0.
+\]
+\end{biz}
+\end{document}
