@@ -1,0 +1,19 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdf
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Local tool caches
+.cache/
+lean/.lake/
+result
+result-*
