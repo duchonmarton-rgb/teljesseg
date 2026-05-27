@@ -1,0 +1,64 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[hungarian]{babel}
+
+\usepackage{amsmath,amsthm,amssymb,mathtools}
+\newtheorem*{theorem}{Tétel}
+\newtheorem*{lemma}{Lemma}
+
+\theoremstyle{definition}
+\newtheorem*{definition}{Definíció}
+\newtheorem*{example}{Példa}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\begin{definition} Legyen $k$ test, és $K$ egy bővítése. A $K/k$ testbővítés \textit{Kähler-differenciáljai} az az $\Omega_{K/k}$ vektortér $K$ felett, amit úgy kapunk, hogy a $\{dx\mid x\in K\}$ formális változók által szabadon generált vektorteret kifaktorizáljuk a következő relációkkal:
+\begin{itemize}
+    \item $\forall x\in k:dx=0$
+    \item $d(x+y) = dx +dy$
+    \item $\forall x, y\in K: d(xy)=xdy+ydx$
+\end{itemize}
+\end{definition}
+
+\begin{theorem} $\Omega_{K/k}$ rendelkezik a következő univerzális tulajdonsággal: $\forall M$ $K$-lineáris vektortérre és $\nabla:K\rightarrow M$ $k$-lineáris leképezésre, amire $\nabla\mid_k\:\equiv 0$ és $\forall x, y\in K$-ra $\nabla(xy)=x\nabla y+y\nabla x$, egyértelműen létezik egy $m:\Omega_{K/k}\rightarrow M$ $K$-lineáris leképezés, amire $\nabla = m\circ d$
+\end{theorem}
+\begin{proof} Ha $m$ ilyen, akkor $m(\sum_{x\in K}\alpha_xdx)=\sum_{x\in K}\alpha_x\nabla x$.
+\\Ez lineáris, és jóldefiniált, mert minden $x\in k$-ra, illetve $\alpha,\beta\in K$-ra $dx$, $d(\alpha+\beta)-d\alpha - d\beta$, $d(\alpha\beta)-\alpha d\beta-\beta d\alpha$ alakú kifejezések képe rendre $\nabla x$, $\nabla(\alpha+\beta)-\nabla\alpha - \nabla\beta$, $\nabla(\alpha\beta)-\alpha\nabla\beta-\beta\nabla\alpha$, és ezek mindegyike $0$ 
+\end{proof}
+
+\begin{example}
+$\Omega_{k(t)/k}=k(t)dt$.
+\\A szorzásszabályból indukcióval $d(t^n)=(n-1)d(t^{n-1})$.
+\\$0=d(f\cdot \frac1f)=\frac1fdf+fd\frac1f$, tehát $d\frac1f=-\frac{df}{f^2}$.
+\\Ezek segítségével megkaphatunk mindent, tehát $\Omega_{k(t)/k}\subseteq k(t)dt$.
+\\$\Omega_{k(t)/k}$ vektortér $k(t)$ felett, tehát $\Omega_{k(t)/k} = k(t)dt$  
+\end{example}
+
+\begin{lemma} Ha $K/k$ véges szeparábilis bővítés, akkor $\Omega_{K/k}=0$
+\end{lemma}
+\begin{proof} Elég belátni, hogy minden $\alpha\in K$-re $d\alpha=0$, mert ezek generálják $\Omega_{K/k}$-t. 
+\\Legyen $\alpha$ minimálpolinomja $k$ felett $f$. Mivel $K$ szeparábilis, $f'(\alpha)\neq0$.
+\\Ugyanakkor $0=d(0)=d(f(\alpha)) = f'(\alpha)d\alpha$, tehát $d\alpha=0$, és ezt akartuk bizonyítani.
+\end{proof}
+
+\begin{theorem} Ha $k(t)$ a $k$ feletti racionális törtfüggvények teste, és $K$ ennek véges szeparábilis bővítése, akkor $\dim_K\Omega_{K/k}=1$
+\end{theorem}
+
+\begin{proof} Tekintsük a
+$$K\underset{k(t)}\otimes\Omega_{k(t)/k}\overset{\varphi}\rightarrow\Omega_{K/k}\overset{\psi}\rightarrow\Omega_{K/k(t)}\rightarrow 0$$
+egzakt sorozatot, ahol $\varphi(\alpha\otimes df)= \alpha df$, és $\psi(d\alpha)= d\alpha$.
+
+$\Omega_{k(t)/k}=k(t)dt$, tehát $K\underset{k(t)}\otimes\Omega_{k(t)/k}\cong Kdt$
+
+$K/k(t)$ szeparábilis, tehát $\Omega_{K/k(t)}=0$.
+
+Ezekkel átírva az egzakt sorozatot:
+$$Kdt\rightarrow \Omega_{K/k}\rightarrow 0$$
+tehát van szürjektív leképezés egy egydimenziós vektortérről $\Omega_{K/k}$-ra, és $dt\neq0$ tehát ez is egydimenziós.
+\end{proof}
+
+\end{document}
