@@ -1,21 +1,22 @@
-# Repartitions and the classical Riemann-Roch-theorem
+# Repartitions and the Classical Riemann-Roch Theorem
 
 This repository contains collaboratively maintained TeX notes for the Riemann-Roch theorem, with a planned Lean 4 formalization track.
 
-## Current goals
+## Current Goals
 
-1. Collecting the so far written TeX files.
-2. Mark overlaps in the source.
-3. Create a unique and solid LaTeX document.
-4. Identifying missing parts from the proof and theory.
-5. Make notation, definitions, propositions and proofs consistent and unique.
-6. Prepare Lean 4 formalization.
+1. Collect the TeX files written so far.
+2. Mark overlaps between existing sources.
+3. Build a single coherent LaTeX document.
+4. Identify missing parts of the proof and surrounding theory.
+5. Make notation, definitions, propositions, and proofs consistent.
+6. Prepare a Lean 4 formalization.
 
 ## Structure
 
 ```text
 .
 ├── README.md
+├── CONTRIBUTING.md
 ├── flake.nix
 ├── flake.lock
 ├── tex/
@@ -23,6 +24,7 @@ This repository contains collaboratively maintained TeX notes for the Riemann-Ro
 │   ├── preamble.tex
 │   ├── sections/
 │   ├── figures/
+│   ├── incoming/
 │   └── bibliography.bib
 ├── lean/
 │   ├── lakefile.lean
@@ -32,67 +34,70 @@ This repository contains collaboratively maintained TeX notes for the Riemann-Ro
     └── scratch/
 ```
 
-The `tex/` directory contains `LaTeX` sources. The `tex/main.tex` should be
-the main document, `tex/preamble.tex` should be the place forcommon macros, theorem environments and notations.
+The `tex/` directory contains the LaTeX sources. The main entry point is `tex/main.tex`. Shared macros, theorem environments, packages, and notation belong in `tex/preamble.tex`.
 
-The `tex/sections` directory should contain the larger logical parts,
-like definitions, preparatory lemmas, repartitions, main steps of the RR proof
-and examples.
+The `tex/sections/` directory is for the larger logical parts of the notes: definitions, preparatory lemmas, repartitions, the main steps of the Riemann-Roch proof, and examples. The `tex/incoming/` directory is for contributed or imported drafts before they are merged into the main document.
 
-The `lean/` directory is the place for later Lean 4 formalization. The
-structure of Lean files should mimic the structure of the mathematical
-flow of the latex document, but should adhere to `mathlib` conventions.
+The `lean/` directory is for the planned Lean 4 formalization. Its structure should follow the mathematical flow of the TeX document while still using `mathlib` conventions.
 
-## Contributing
+## Nix Workflow
 
-Every contribution should be identifiable. This is especially important
-if you upload work sent previously in main, or when you modify somebody
-elses work.
-
-In the case of a commit or pull request, please write shortly:
-- what you contributed;
-- which file you modified;
-- contributed new features, corrections, or refactored;
-- whether there is an overlap with another file;
-- whether a TODO or an open question remained.
-
-Examples for good commit messages:
-
-```text
-Add TeX notes on repartition definitions
-Merge overlapping divisor notation sections
-Fix proof of the degree formula
-Mark overlap between local and global Riemann-Roch arguments
-```
-
-Avoid commit messages like:
-
-```text
-Update
-Fix
-Stuff
-More changes
-```
-
-## Uploading work
-
-If you have previously sent work in mail, upload into the repo to
-the following place: `tex/incoming`
-
-The name of the file should contain your name or monogram, and the topic, e.g.
-
-```text
-tex/incoming/john_doe_repartitions.tex
-tex/incoming/alice_carpenter_divisors.tex
-```
-
-## Building the TeX notes
-
-With Nix flakes enabled:
+This repository uses a Nix flake for reproducible TeX and Lean tooling. With flakes enabled, enter the development shell with:
 
 ```bash
 nix develop
-latexmk -pdf tex/main.tex
+```
 
-nix build .#all
-nix build .#filename
+The shell provides the TeX Live environment used by the notes, the project fonts, `latexmk`, `texlab`, `chktex`, Lean 4 with Lake, and useful tools such as `ripgrep`, `fd`, `nil`, and `alejandra`.
+
+Build the main PDF through Nix:
+
+```bash
+nix build .#tex
+```
+
+The generated PDF is available at:
+
+```text
+result/tex.pdf
+```
+
+For local editing inside `nix develop`, compile directly with:
+
+```bash
+latexmk -pdf -lualatex tex/main.tex
+```
+
+To continuously rebuild while editing, run:
+
+```bash
+watch-latex
+```
+
+`watch-latex` watches `tex/main.tex` by default. You can pass another TeX entry point, for example:
+
+```bash
+watch-latex tex/incoming/marton_a_varga_residue_theorem.tex
+```
+
+Check the flake outputs with:
+
+```bash
+nix flake check
+```
+
+## Lean 4
+
+The development shell includes Lean 4 and Lake:
+
+```bash
+nix develop
+cd lean
+lake build
+```
+
+The Lean directory is currently the place for future formalization work. Keep Lean files under `lean/`, and use `lean/lean-toolchain` and `lean/lakefile.lean` as the source of truth for the Lean project.
+
+## Contributing
+
+See `CONTRIBUTING.md` for the contribution workflow, naming conventions for incoming drafts, commit-message guidance, and recommended checks.
