@@ -1,147 +1,147 @@
 {
-  description = "Minimal LaTeX Flake";
+  description = "TeX and Lean 4 development environment for the Riemann-Roch notes";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
+
   outputs = {
     self,
     nixpkgs,
     flake-utils,
   }:
-    flake-utils.lib.eachSystem flake-utils.lib.allSystems (system: let
+    flake-utils.lib.eachDefaultSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
+      lib = pkgs.lib;
+
       tex = pkgs.texlive.combine {
         inherit
           (pkgs.texlive)
           scheme-medium
-          pgf
-          tikz-cd
-          fontspec
-          enumitem
-          unicode-math
-          amsmath
+          amscls
           amsfonts
-          mathtools
-          xcolor
-          hyperref
+          amsmath
+          babel-english
+          babel-hungarian
+          biber
+          biblatex
           booktabs
-          titlesec
-          microtype
+          enumitem
+          fontspec
           geometry
-          nicematrix
+          hyperref
           latex-bin
           latexmk
           luaotfload
-          babel-hungarian
+          mathtools
+          microtype
+          nicematrix
+          pgf
           standalone
+          tikz-cd
+          chktex
+          titlesec
+          unicode-math
+          xcolor
           ;
       };
-      # rebuild document.tex on change
-      watchlatex = pkgs.stdenvNoCC.mkDerivation {
-        name = "watch-latex";
-        src = null;
-        buildInputs = [tex pkgs.coreutils];
-        phases = ["installPhase"];
-        installPhase = ''
-            mkdir -p $out/bin
-            cat > $out/bin/watch-latex << 'EOF'
-          #!/usr/bin/env bash
-          exec latexmk -pvc -pdf -lualatex -interaction=nonstopmode -shell-escape document.tex \
-            > watchlatex.log 2>&1
-          EOF
-            chmod +x $out/bin/watch-latex
-        '';
-      };
 
-      texFiles =
-        builtins.filter
-        (n: pkgs.lib.hasSuffix ".tex" n)
-        (builtins.attrNames (builtins.readDir self));
+      fonts = [
+        pkgs.lexend
+        pkgs.nerd-fonts.tinos
+      ];
 
-      stripExt = name:
-        builtins.substring 0 (builtins.stringLength name - 4) name;
+      osFontDir = lib.concatStringsSep ":" [
+        "${pkgs.lexend}/share/fonts/variable/lexend/lexend"
+        "${pkgs.lexend}/share/fonts/truetype/lexend/lexend"
+        "${pkgs.lexend}/share/fonts/truetype/public/lexend"
+        "${pkgs.nerd-fonts.tinos}/share/fonts/truetype/NerdFonts/Tinos"
+      ];
 
-      buildTex = file: let
-        name = stripExt file;
-      in
-        pkgs.stdenvNoCC.mkDerivation rec {
-          pname = "latex-${name}";
+      texCacheSetup = ''
+        mkdir -p .cache/{texmf-var,texmf-config,luaotfload}
+        export TEXMFHOME=$(pwd)/.cache
+        export TEXMFCONFIG=$(pwd)/.cache/texmf-config
+        export TEXMFVAR=$(pwd)/.cache/texmf-var
+        export LUAOTFLOAD_CACHE=$(pwd)/.cache/luaotfload
+        export OSFONTDIR="${osFontDir}"
+      '';
+
+      buildTexDocument = {
+        name,
+        texRoot ? "tex",
+        mainFile ? "main.tex",
+      }:
+        pkgs.stdenvNoCC.mkDerivation {
+          pname = "repartitions-${name}";
           version = "1";
           src = self;
 
-          buildInputs = [pkgs.coreutils tex pkgs.lexend pkgs.nerd-fonts.tinos];
+          nativeBuildInputs = [pkgs.coreutils tex] ++ fonts;
           phases = ["unpackPhase" "buildPhase" "installPhase"];
 
           buildPhase = ''
-            export PATH="${pkgs.lib.makeBinPath buildInputs}"
-
-            mkdir -p .cache/{texmf-var,texmf-config,luaotfload}
-            export TEXMFHOME=$(pwd)/.cache
-            export TEXMFCONFIG=$(pwd)/.cache/texmf-config
-            export TEXMFVAR=$(pwd)/.cache/texmf-var
-            export LUAOTFLOAD_CACHE=$(pwd)/.cache/luaotfload
-            export OSFONTDIR="${pkgs.lexend}/share/fonts/variable/lexend/lexend:${pkgs.lexend}/share/fonts/truetype/lexend/lexend:${pkgs.lexend}/share/fonts/truetype/public/lexend:${pkgs.nerd-fonts.tinos}/share/fonts/truetype/NerdFonts/Tinos"
-            export SOURCE_DATE_EPOCH=$(date +%s)
-
+            runHook preBuild
+            ${texCacheSetup}
             luaotfload-tool --update --force
-
+            cd ${texRoot}
             latexmk -interaction=nonstopmode -f -pdf -lualatex \
-               -pretex="\pdfvariable suppressoptionalinfo 521\relax" \
-               -shell-escape \
-               -usepretex ${file}
+              -pretex="\pdfvariable suppressoptionalinfo 521\relax" \
+              -shell-escape \
+              -usepretex ${mainFile}
+            runHook postBuild
           '';
 
           installPhase = ''
+            runHook preInstall
             mkdir -p $out
-            cp ${stripExt file}.pdf $out/
+            cp ${lib.removeSuffix ".tex" mainFile}.pdf $out/${name}.pdf
+            runHook postInstall
           '';
         };
 
-      individual =
-        builtins.listToAttrs
-        (map (f: {
-            name = stripExt f;
-            value = buildTex f;
-          })
-          texFiles);
-
-      all = pkgs.symlinkJoin {
-        name = "latex-all";
-        paths = builtins.attrValues individual;
+      watchLatex = pkgs.writeShellApplication {
+        name = "watch-latex";
+        runtimeInputs = [tex pkgs.coreutils];
+        text = ''
+          target="''${1:-tex/main.tex}"
+          exec latexmk -pvc -pdf -lualatex -interaction=nonstopmode -shell-escape "$target"
+        '';
       };
-    in {
-      packages = individual // {inherit all;};
 
-      devShells.default = pkgs.mkShell rec {
-        buildInputs = [
+      devTools =
+        [
+          pkgs.alejandra
           pkgs.coreutils
-          tex
-          pkgs.lexend
-          pkgs.nerd-fonts.tinos
-          watchlatex
+          pkgs.fd
+          pkgs.git
+          pkgs.lean4
+          pkgs.nil
+          pkgs.ripgrep
           pkgs.texlab
-        ];
-        shellHook = ''
-          mkdir -p .cache/{texmf-var,texmf-config,luaotfload}
-          export TEXMFHOME=$(pwd)/.cache
-          export TEXMFCONFIG=$(pwd)/.cache/texmf-config
-          export TEXMFVAR=$(pwd)/.cache/texmf-var
-          # cache fonts
-          export LUAOTFLOAD_CACHE=$(pwd)/.cache/luaotfload
-          # tinos and lexend fonts
-          export OSFONTDIR="${pkgs.lexend}/share/fonts/variable/lexend/lexend:${pkgs.lexend}/share/fonts/truetype/lexend/lexend:${pkgs.lexend}/share/fonts/truetype/public/lexend:${pkgs.nerd-fonts.tinos}/share/fonts/truetype/NerdFonts/Tinos"
-          # add binaries to path
-          export PATH="${pkgs.lib.makeBinPath buildInputs}:$PATH"
+          watchLatex
+          tex
+        ]
+        ++ fonts;
+    in {
+      packages = {
+        tex = buildTexDocument {name = "tex";};
+        main = self.packages.${system}.tex;
+        default = self.packages.${system}.tex;
+      };
 
-          echo "latex devshell"
-          echo "run:"
-          echo "watch-latex to start detached live compilation"
-          echo "----------------------------------------------"
-          echo "to build a pdf from document.tex, run:"
-          echo "  nix build .#document"
-          echo "to build all documents <file.tex>, run:"
-          echo "  nix build .#all"
+      devShells.default = pkgs.mkShell {
+        packages = devTools;
+
+        shellHook = ''
+          ${texCacheSetup}
+
+          echo "Riemann-Roch notes development shell"
+          echo "TeX:  latexmk -pdf -lualatex tex/main.tex"
+          echo "Watch: watch-latex [tex/main.tex]"
+          echo "Build: nix build .#tex"
+          echo "Lean: cd lean && lake build"
         '';
       };
     });
