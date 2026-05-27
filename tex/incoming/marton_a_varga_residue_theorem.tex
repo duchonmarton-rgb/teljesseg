@@ -1,0 +1,1132 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[a4paper,margin=0.85in]{geometry}
+\usepackage{fontspec}
+\usepackage{mathtools,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage[english]{babel}
+\usepackage{tikz-cd}
+\usepackage[colorlinks=true,linkcolor=teal!55!black,urlcolor=teal!55!black,citecolor=teal!55!black]{hyperref}
+
+\IfFontExistsTF{Tinos Nerd Font}{\setmainfont{Tinos Nerd Font}}{\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Lexend}{\setsansfont{Lexend}}{\setsansfont{TeX Gyre Heros}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=*,itemsep=3pt,topsep=3pt}
+
+\definecolor{ink}{HTML}{1E2624}
+\definecolor{accent}{HTML}{0B6B5A}
+\definecolor{soft}{HTML}{F2F7F4}
+\color{ink}
+
+\newcommand{\OO}{\mathcal O}
+\newcommand{\wideO}{\widehat{\mathcal O}}
+\newcommand{\AX}{\mathbb A_X}
+\newcommand{\OmegaK}{\Omega^1_{K/k}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Frac}{\operatorname{Frac}}
+\newcommand{\res}{\operatorname{res}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\ord}{\operatorname{ord}}
+\newcommand{\Div}{\operatorname{Div}}
+\newcommand{\Spec}{\operatorname{Spec}}
+\newcommand{\coker}{\operatorname{coker}}
+\newcommand{\id}{\operatorname{id}}
+\newcommand{\fp}{\operatorname{fp}}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}[definition]{Example}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{source}{Source note}
+
+\renewcommand{\qedsymbol}{$\square$}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{\sffamily Residues on Algebraic Curves:\\ Serre, Tate, Adèles, and Divisors}
+\author{Marton A. Varga}
+\date{ELTE E\"otv\"os Lor\'and University, 2025/26}
+
+\begin{document}
+\maketitle
+
+\begin{source}
+These notes reorganize material from J.-P. Serre, \emph{Algebraic Groups and Class Fields}, Chapter II, and J. Tate, \emph{Residues of differentials on curves}.  The aim is expository rather than synthetic: Serre's Laurent-series residues, repartitions, trace argument, and duality theorem are presented alongside Tate's finite-potent traces and adèlic proof.  Statements labelled as propositions or theorems are source-based paraphrases of the corresponding results in Serre or Tate.
+\end{source}
+
+\tableofcontents
+\newpage
+
+\section*{0. Roadmap}
+\addcontentsline{toc}{section}{0. Roadmap}
+
+The residue theorem on a smooth proper algebraic curve has four layers.
+
+\begin{enumerate}
+\item \textbf{Local Laurent series.}  At a smooth closed point $p$, choose a uniformizer $t$.  The completed local field is a Laurent-series field, written in modern notation as
+\[
+  K_p=\Frac(\wideO_p) \simeq k(p)((t))
+\]
+subject to the usual coefficient-field caveat.  For a differential written locally as $f(t)\,dt$, Serre's residue is the coefficient of $t^{-1}$ in $f(t)$, followed by the trace $k(p) \to k$ when the residue field is not $k$.
+
+\item \textbf{Tate's invariant construction.}  Tate starts with a $k$-vector space $V$ and a subspace $A$ which plays the role of an integral lattice.  From the relation of being finite-dimensional modulo another subspace he defines classes $E,E_1,E_2,E_0$ of endomorphisms.  The commutator $[f_1,g_1]$ attached to $f\,dg$ lies in $E_0$, hence is finite potent, so it has a trace.  The residue is
+\[
+  \res_A^V(f\,dg)=\Tr_V([f_1,g_1]).
+\]
+The commutator measures the finite-dimensional boundary crossing between the integral part $A$ and the polar part outside $A$.
+
+\item \textbf{The local comparison.}  Put $V=K_p$ and $A=\wideO_p$.  If $p$ is $k$-rational and $K_p\simeq k((t))$, Tate proves that the trace-commutator residue equals the coefficient of $t^{-1}$ in $f\,dg$.  The monomial calculation
+\[
+  f=t^m,\qquad g=t^n,
+  \qquad f\,dg=n t^{m+n-1}\,dt
+\]
+gives residue $n$ if $m+n=0$ and $0$ otherwise.  This is the point where Tate's abstract construction becomes Serre's Laurent coefficient.
+
+\item \textbf{Global assembly.}  Serre's repartitions are the curve adèles
+\[
+  \AX=\prod_p'K_p.
+\]
+They store all local expansions at once.  Divisors impose pole-order conditions by subspaces $\AX(D)$.  The global residue theorem says that for a proper smooth curve,
+\[
+  \sum_{p\in X}\res_p(\omega)=0.
+\]
+Tate proves this from the subspace identity
+\[
+  \res_{A_S}+\res_K=\res_{\OO(S)}+\res_{K+A_S},
+\]
+where the other terms vanish for conceptual reasons: $K$ is a $K$-module, and properness makes the relevant quotient finite-dimensional.
+\end{enumerate}
+
+The document therefore moves from Tate's finite traces to Serre's coefficient residues, then to adèles, divisors, the global theorem, trace compatibility, and duality.
+
+\section{Standing Assumptions and Notation}
+
+Throughout, $k$ is the base field.  A curve means an integral regular curve over $k$ unless a stronger hypothesis is stated.  Properness is used only where global finiteness is required.  Smoothness is used where Kähler differentials form the expected line bundle and where completed local fields have the standard Laurent-series description over the residue field.
+
+Let $X/k$ be a curve and let
+\[
+  K=k(X)
+\]
+be its function field.  For a closed point $p\in X$ write
+\[
+  \OO_p \quad \text{for the local ring},\qquad
+  \wideO_p \quad \text{for its completion},
+\]
+\[
+  K_p=\Frac(\wideO_p) \quad \text{for the completed local field},\qquad
+  k(p)=\wideO_p/\mathfrak m_p \quad \text{for the residue field}.
+\]
+The normalized valuation at $p$ is denoted $v_p$.  If $D=\sum_p n_p p$ is a divisor, then $v_p(D)=n_p$.
+
+The global adèle space is
+\[
+  \AX=\prod_p' K_p
+  =\{(f_p)_p\in \prod_p K_p : f_p\in \wideO_p \text{ for almost all }p\},
+\]
+and the integral adèles are
+\[
+  \AX(0)=\prod_p \wideO_p.
+\]
+For a divisor $D=\sum_p n_p p$, the divisor-bounded adèles are
+\[
+  \AX(D)=\{(f_p)_p\in \AX : v_p(f_p)+n_p\ge 0\text{ for all }p\}.
+\]
+
+\subsection*{Notation Dictionary}
+\addcontentsline{toc}{subsection}{Notation Dictionary}
+
+\begin{center}
+\small
+\begin{tabular}{L{0.18\linewidth}L{0.20\linewidth}L{0.20\linewidth}L{0.28\linewidth}}
+\toprule
+Concept & Serre terminology & Tate terminology & Modern notation used here \\
+\midrule
+Base field & $k$ & $k$ & $k$ \\
+Function field & $F=k(X)$ & $K=k(X)$ & $K=k(X)$ \\
+Closed point & $P$ & $p$ & $p\in X$ \\
+Local ring & $\OO_P$ & $\OO_p$ & $\OO_p$ \\
+Completion & $F_P$ or local completion & $K_p$ with integral part $A_p$ & $K_p=\Frac(\wideO_p)$ \\
+Integral local lattice & valuation ring & $A_p$ & $\wideO_p$ \\
+Repartition/adèle & repartition $R$ & restricted product $V_S$ & $\AX=\prod_p'K_p$ \\
+Residue & $\operatorname{Res}_P$ & $\res_p=\res_{A_p}^{K_p}$ & $\res_p$ \\
+Abstract lattice & not emphasized & $A\subset V$ & $A\subset V$ only locally in Tate's formalism \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The symbol $A$ is reserved for Tate's lattice-like subspace of a vector space $V$.  The global adèle object is always $\AX$, never $A$.
+
+\section{Finite-Potent Traces and Commensurable Subspaces}
+
+This section follows Tate's first section.  The role of the definitions is to make sense of traces for commutators which are not finite-rank on the whole vector space, but become finite-dimensional after a bounded number of iterations.
+
+\begin{definition}[Finite-potent endomorphism]
+Let $V$ be a vector space over $k$.  An endomorphism $\theta\in\End_k(V)$ is \emph{finite potent} if $\theta^nV$ is finite-dimensional for some $n\ge 1$.
+\end{definition}
+
+\begin{example}
+Every nilpotent endomorphism is finite potent, because $\theta^nV=0$ for large $n$.  Every finite-rank endomorphism is finite potent, because already $\theta V$ is finite-dimensional.  Tate's point is that a commutator may not visibly have finite rank on $V$, but after the lattice conditions force it into $E_0$, it is finite potent and therefore has a trace.
+\end{example}
+
+\begin{definition}[Finite-potent subspace]
+A subspace $F\subset\End_k(V)$ is \emph{finite potent} if there is an integer $n$ such that for every choice $\theta_1,\ldots,\theta_n\in F$, the image $\theta_1\cdots\theta_nV$ is finite-dimensional.
+\end{definition}
+
+\begin{remark}
+Finite-potent trace is weaker than ordinary trace on all endomorphisms.  Tate explicitly warns that additivity need not be available for arbitrary finite-potent endomorphisms; he uses linearity only on finite-potent \emph{subspaces}, where traces for a finite-dimensional family are computed on one finite-dimensional eventual image.
+\end{remark}
+
+\begin{proposition}[Tate trace]
+For a finite-potent endomorphism $\theta$ of $V$ there is a trace $\Tr_V(\theta)\in k$ characterized by the following properties.
+\begin{enumerate}[label=(T\arabic*)]
+\item If $V$ is finite-dimensional, $\Tr_V(\theta)$ is the ordinary trace.
+\item If $W\subset V$ and $\theta W\subset W$, then
+\[
+  \Tr_V(\theta)=\Tr_W(\theta)+\Tr_{V/W}(\theta).
+\]
+\item If $\theta$ is nilpotent, then $\Tr_V(\theta)=0$.
+\item If $F\subset\End_k(V)$ is a finite-potent subspace, then $\Tr_V\colon F\to k$ is $k$-linear.
+\item If $\phi\colon V'\to V$ and $\psi\colon V\to V'$ are $k$-linear and $\phi\psi$ is finite potent, then $\psi\phi$ is finite potent and
+\[
+  \Tr_V(\phi\psi)=\Tr_{V'}(\psi\phi).
+\]
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Source-based proof]
+Tate observes that if $W$ is finite-dimensional, $\theta W\subset W$, and $\theta^nV\subset W$ for some $n$, then $\Tr_V(\theta)$ may be computed as the ordinary trace on $W$.  Such a $W$ exists by taking $W=\theta^nV$ for large $n$, and the first three properties characterize the result.  For a finite-potent subspace $F$, all traces can be computed on the finite-dimensional space $F^nV$, giving linearity.  The cyclic property follows because for large $n$ the maps $\phi$ and $\psi$ identify the finite-dimensional eventual images of $\phi\psi$ and $\psi\phi$.
+\end{proof}
+
+\begin{definition}[Commensurability]
+Let $A,B\subset V$ be $k$-subspaces.  Write $A\le B$ if $(A+B)/B$ is finite-dimensional; equivalently, $A\subset B+W$ for some finite-dimensional subspace $W\subset V$.  Write $A\sim B$ if $A\le B$ and $B\le A$.
+\end{definition}
+
+The relation $A\le B$ means that $A$ is not much larger than $B$; the relation $A\sim B$ means that the two subspaces differ only by finite-dimensional error.  Tate uses this relation as the algebraic replacement for a topology or a lattice.
+
+\begin{example}[The model lattice]
+In $V=k((t))$ let $A=k[[t]]$.  Then $t^{-m}A\sim A$ for every integer $m$, because $t^{-m}A/A$ or $A/t^{-m}A$ is spanned by finitely many monomials.  This example is the local picture behind $\wideO_p\subset K_p$.
+\end{example}
+
+The elementary rules are
+\[
+  A\le B,\\ B\le C \implies A\le C,
+\]
+\[
+  A\le B \implies \phi(A)\le \phi(B)\quad\text{for every }k\text{-linear }\phi,
+\]
+and
+\[
+  \sum_i A_i\le \bigcap_j B_j
+  \quad\Longleftrightarrow\quad
+  A_i\le B_j\text{ for all }i,j.
+\]
+
+\begin{definition}[The endomorphism classes $E,E_1,E_2,E_0$]
+Fix a subspace $A\subset V$.  Define subspaces of $\End_k(V)$ by
+\[
+  E=\{\theta : \theta A\le A\},
+\]
+\[
+  E_1=\{\theta : \theta V\le A\},\qquad
+  E_2=\{\theta : \theta A\le 0\},
+\]
+\[
+  E_0=\{\theta : \theta V\le A\text{ and }\theta A\le 0\}=E_1\cap E_2.
+\]
+Here $B\le 0$ means that $B$ is finite-dimensional.
+\end{definition}
+
+Intuitively, $E$ consists of operators preserving the lattice $A$ up to finite-dimensional error.  Operators in $E_1$ have image essentially inside $A$; operators in $E_2$ essentially kill $A$; operators in $E_0$ both land near $A$ and vanish on $A$ up to finite-dimensional error, so they are finite potent.
+
+\begin{proposition}[Tate's algebra of operators]
+The space $E$ is a $k$-subalgebra of $\End_k(V)$.  The $E_i$ are two-sided ideals in $E$.  They depend only on the equivalence class of $A$ under $\sim$.  Moreover
+\[
+  E_1\cap E_2=E_0,
+  \qquad
+  E_1+E_2=E,
+\]
+and $E_0$ is finite potent.
+\end{proposition}
+
+\begin{proof}[Source-based proof]
+The only non-formal point in Tate's proof is $E_1+E_2=E$.  Choose a $k$-linear projection $\pi\colon V\to A$.  Then $\pi\in E_1$ and $1-\pi\in E_2$, hence $1=\pi+(1-\pi)$ and the same decomposition works inside $E$.  The remaining assertions follow from the definitions and the elementary rules for $\le$.
+\end{proof}
+
+\begin{proposition}[Trace-zero commutators]
+Suppose either $\phi\in E_0$ and $\psi\in E$, or $\phi\in E_1$ and $\psi\in E_2$.  Then
+\[
+  [\phi,\psi]=\phi\psi-\psi\phi
+\]
+lies in $E_0$ and has finite-potent trace zero.
+\end{proposition}
+
+\begin{proof}[Source-based proof]
+Membership in $E_0$ is checked from the definitions.  The trace vanishes by Tate's cyclic property for finite-potent traces.
+\end{proof}
+
+\section{Tate's Abstract Residue}
+
+\begin{definition}[Kähler differentials]
+If $R$ is a commutative $k$-algebra, the module of Kähler differentials $\Omega^1_{R/k}$ is the $R$-module generated by symbols $df$ for $f\in R$, subject to
+\[
+  d(f+g)=df+dg,
+  \qquad
+  d(fg)=f\,dg+g\,df,
+  \qquad
+  dc=0\quad(c\in k).
+\]
+Equivalently, every $k$-derivation $R\to M$ into an $R$-module factors uniquely through an $R$-linear map $\Omega^1_{R/k}\to M$.
+\end{definition}
+
+\begin{example}
+For $R=k(t)$ one has $\Omega^1_{k(t)/k}=k(t)\,dt$.  Thus a rational differential on a smooth curve is locally of the form $f\,dt$ once a separating parameter $t$ is chosen.
+\end{example}
+
+Let $K$ be a commutative $k$-algebra with $1$, let $V$ be a $K$-module, and let $A\subset V$ be a $k$-subspace such that
+\[
+  fA\le A\qquad\text{for every }f\in K.
+\]
+Thus $K$ acts on $V$ through $E\subset\End_k(V)$.  Tate suppresses the distinction between $f\in K$ and the corresponding endomorphism of $V$; we do the same when no confusion can result.
+
+\begin{proposition}[Tate's abstract residue]
+There exists a unique $k$-linear map
+\[
+  \res_A^V\colon \Omega^1_{K/k}\longrightarrow k
+\]
+such that for all $f,g\in K$,
+\[
+  \res_A^V(f\,dg)=\Tr_V([f_1,g_1])
+\]
+whenever $f_1,g_1\in E$ satisfy
+\begin{enumerate}[label=(\alph*)]
+\item $f_1\equiv f\pmod {E_2}$ and $g_1\equiv g\pmod {E_2}$;
+\item either $f_1\in E_1$ or $g_1\in E_1$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Source-based proof]
+Since $E=E_1+E_2$, suitable $f_1$ and $g_1$ exist.  The commutator $[f_1,g_1]$ lies in $E_1$ by condition (b), and it is congruent to $[f,g]=0$ modulo $E_2$ by condition (a).  Hence it lies in $E_0$, so its trace is defined.  Tate's trace-zero commutator proposition shows that the value does not change if $f_1$ or $g_1$ is changed by an element of $E_2$ while the other lies in $E_1$.
+
+This gives a $k$-bilinear function $r(f,g)=\Tr_V([f_1,g_1])$ on $K\times K$.  The universal map
+\[
+  c\colon K\otimes_k K\longrightarrow \Omega^1_{K/k},
+  \qquad c(f\otimes g)=f\,dg,
+\]
+is surjective and has kernel generated by
+\[
+  f\otimes gh-fg\otimes h-fh\otimes g.
+\]
+Tate checks vanishing on these generators by choosing $f_1,g_1,h_1\in E_1$ as needed and using
+\[
+  [f_1,g_1h_1]-[f_1g_1,h_1]-[f_1h_1,g_1]=0.
+\]
+Thus $r$ factors uniquely through $\Omega^1_{K/k}$.
+\end{proof}
+
+\begin{remark}
+The definition is not a formal trace of multiplication operators, since multiplication by $f$ and $g$ commute.  The point is that one replaces them by operators $f_1,g_1$ that agree modulo the operators killing the lattice.  The commutator records the finite-dimensional failure of these replacements to commute across the boundary of $A$.
+\end{remark}
+
+\begin{proposition}[Finite computation formula]
+For $f,g\in K$, set
+\[
+  B=A+gA,
+  \qquad
+  C=B\cap f^{-1}A\cap (fg)^{-1}A.
+\]
+Let $\pi$ be a $k$-linear projection of $A+fA+fgA$ onto $A$.  Then $B/C$ is finite-dimensional and
+\[
+  \res_A^V(f\,dg)=\Tr_{B/C}([\pi f,g]).
+\]
+\end{proposition}
+
+This formula makes the boundary interpretation concrete: $B/C$ is the finite-dimensional part where applying $g$, then $f$, crosses between the integral region and the polar region.
+
+\subsection{Useful Properties}
+
+The following list is Tate's list of properties of $\res_A^V$.
+
+\begin{proposition}[Properties R1--R6]
+Assume the preceding setup.
+\begin{enumerate}[label=(R\arabic*)]
+\item If $V\supset V'\supset A$ and $KV'=V'$, then $\res_A^V=\res_A^{V'}$.  Moreover, if $A\sim A'$, then $\res_A^V=\res_{A'}^V$.
+\item If
+\[
+  fA+fgA+fg^2A\subset A,
+\]
+then $\res_A(f\,dg)=0$.  In particular this holds if $fA\subset A$ and $gA\subset A$.  If $A$ is a $K$-submodule of $V$, then $\res_A=0$.
+\item For $g\in K$,
+\[
+  \res_A(g^n\,dg)=0\quad(n\ge 0),
+\]
+and, if $g$ is invertible,
+\[
+  \res_A(g^n\,dg)=0\quad(n\le -2).
+\]
+In particular $\res_A(dg)=0$.
+\item If $g\in K^\times$ and $hA\subset A$, then
+\[
+  \res_A(hg^{-1}\,dg)
+  =\Tr_{A/(A\cap gA)}(h)-\Tr_{gA/(A\cap gA)}(h).
+\]
+In particular, if $gA\subset A$, then
+\[
+  \res_A(g^{-1}\,dg)=\dim_k(A/gA).
+\]
+\item If $B\subset V$ is another $k$-subspace such that $fB\le B$ for every $f\in K$, then
+\[
+  \res_A+\res_B=\res_{A+B}+\res_{A\cap B}.
+\]
+\item If $K'$ is a commutative $K$-algebra which is free of finite rank as a $K$-module, set
+\[
+  V'=K'\otimes_K V,
+  \qquad
+  A'=\sum_i x_i\otimes A
+\]
+for a $K$-basis $(x_i)$ of $K'$.  Then the equivalence class of $A'$ is independent of the basis, and for $f'\in K'$ and $g\in K$,
+\[
+  \res_{A'}(f'\,dg)=\res_A(\Tr_{K'/K}(f')\,dg).
+\]
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Tate's proof indications]
+For (R1), Tate uses the finite computation formula and the fact that changing $A$ within its commensurability class changes only finite-dimensional boundary pieces on which the trace contribution cancels.  For (R2), the condition forces the spaces $B=A+gA$ and $C=B\cap f^{-1}A\cap(fg)^{-1}A$ in the finite computation formula to coincide, hence the trace is zero.
+
+For (R3), choose $g_1\in E_1$ with $g_1\equiv g\pmod {E_2}$.  Then for $n\ge0$,
+\[
+  \res_A(g^n\,dg)=\Tr_V([g_1^n,g_1])=0,
+\]
+since the two operators commute.  If $g$ is invertible, the cases $n\le -2$ follow by applying the same argument to $g^{-1}$.
+
+For (R4), take $f=hg^{-1}$ in the finite computation formula.  With $\pi$ a projection onto $A$ and $\pi_1=g\pi g^{-1}$ a projection onto $gA$, the commutator becomes
+\[
+  [\pi f,g]=\pi h-\pi_1 h.
+\]
+Taking traces on the finite quotient $(A+gA)/(A\cap gA)$ gives exactly the displayed difference of traces.
+
+For (R5), choose projections onto $A$, $B$, $A+B$, and $A\cap B$ so that
+\[
+  \pi_A+\pi_B=\pi_{A+B}+\pi_{A\cap B}.
+\]
+Although finite-potent trace is not additive in full generality, Tate checks that the commutators occurring here lie in one finite-potent subspace, where trace is linear.  This gives the four-term identity.  For (R6), write endomorphisms of $V'=K'\otimes_KV$ as matrices relative to a $K$-basis $(x_i)$ of $K'$.  The finite-potent trace on $V'$ is the sum of the diagonal finite-potent traces on $V$, and the diagonal sum is precisely the field trace $\Tr_{K'/K}$.
+\end{proof}
+
+\begin{remark}
+Property (R5) is the global engine of Tate's proof; it is a residue identity for a square of subspaces.  Property (R6) is the compatibility with field trace, not to be confused with the finite-potent operator trace used in the definition.
+\end{remark}
+
+\section{Local Fields and the Coefficient Residue}
+
+This section records Serre's local construction.  Let $p$ be a smooth closed point of $X$.  A uniformizer $t\in\OO_p$ identifies the completed local ring with a formal power series ring over a coefficient field when such a coefficient field is chosen.  In the standard smooth case one writes
+\[
+  K_p\simeq k(p)((t)).
+\]
+If $k(p)=k$, this is the familiar $K_p\simeq k((t))$.
+
+\begin{definition}[Uniformizer]
+A \emph{uniformizer} at a closed point $p$ is an element $t\in\OO_p$ with $v_p(t)=1$, equivalently a generator of the maximal ideal of the discrete valuation ring $\OO_p$.
+\end{definition}
+
+\begin{definition}[Coefficient residue]
+Let $t$ be a uniformizer and write a separated completed differential as
+\[
+  \omega=f(t)\,dt,
+  \qquad
+  f(t)=\sum_{n\gg -\infty} a_n t^n,
+  \quad a_n\in k(p).
+\]
+The coefficient residue over $k(p)$ is
+\[
+  \res_{p,k(p)}(\omega)=a_{-1}.
+\]
+The $k$-valued residue used globally is
+\[
+  \res_p(\omega)=\Tr_{k(p)/k}(a_{-1}).
+\]
+When $p$ is $k$-rational, this is simply the coefficient $a_{-1}\in k$.
+\end{definition}
+
+\begin{example}
+In $k((t))$, the residue of
+\[
+  (3t^{-2}+5t^{-1}+7+t^3)\,dt
+\]
+is $5$.  The residue of $d(t^{-1})=-t^{-2}\,dt$ is zero, illustrating Serre's property $\res_t(dg)=0$.
+\end{example}
+
+Serre formulates this in the case of an algebraically closed base field, where $k(p)=k$ and the trace from $k(p)$ to $k$ is invisible.  Modern notation separates the coefficient in $k(p)$ from the final $k$-valued residue.
+
+\subsection{Independence of the Uniformizer}
+
+Serre's proof is local.  Let $K_p$ be denoted $L$, let $\OO$ be its valuation ring, and let $\mathfrak m$ be the maximal ideal.  The ordinary module of Kähler differentials may be too large for a complete valued field, so Serre passes to the separated module
+\[
+  D'_k(L)=D_k(L)/Q,
+  \qquad
+  Q=\bigcap_{N\ge 0}\mathfrak m^N d\OO.
+\]
+
+\begin{lemma}[Serre's separated differential lemma]
+Let $t$ be a uniformizer.  For every
+\[
+  f=\sum_{n\gg -\infty}a_n t^n\in L
+\]
+put
+\[
+  f'_t=\sum_{n\gg -\infty} n a_n t^{n-1}.
+\]
+Then
+\[
+  df=f'_t\,dt\quad\text{in }D'_k(L),
+\]
+and $dt$ is a basis of $D'_k(L)$ over $L$.
+\end{lemma}
+
+\begin{proof}[Source-based proof]
+For each $N\ge 0$, write $f=f_0+t^{N+1}f_1$ with $f_1\in\OO$ and $f_0$ a finite Laurent polynomial up to the required order.  Then
+\[
+  f'_t=(f_0)'_t+t^Ng
+\]
+for some $g\in\OO$, and
+\[
+  df-f'_t\,dt=(N+1)t^Nf_1\,dt+t^{N+1}df_1-t^Ng\,dt
+\]
+lies in $\mathfrak m^Nd\OO$.  This proves the derivative formula in the separated quotient.  The derivation $D(f)=f'_t$ is non-zero and kills the intersection defining $Q$, so $dt$ is not zero and hence is a basis.
+\end{proof}
+
+For a uniformizer $t$, define $\res_t(f(t)dt)$ as the coefficient of $t^{-1}$ in $f(t)$.
+
+\begin{proposition}[Invariance of the coefficient residue]
+If $t$ and $u$ are two uniformizers of $L$, then
+\[
+  \res_t(\omega)=\res_u(\omega)
+\]
+for every $\omega\in D'_k(L)$.
+\end{proposition}
+
+\begin{proof}[Source-based proof]
+Serre first records the following properties of $\res_t$:
+\begin{enumerate}[label=(\roman*)]
+\item $\res_t$ is $k$-linear.
+\item $\res_t(\omega)=0$ if $v(\omega)\ge 0$.
+\item $\res_t(dg)=0$ for every $g\in L$.
+\item $\res_t(dg/g)=v(g)$ for every $g\in L^\times$.
+\end{enumerate}
+For (iv), write $g=t^nw$ with $v(w)=0$.  Then $dg/g=n\,dt/t+dw/w$, and $dw/w$ is regular.
+
+Now write
+\[
+  \omega=\sum_{n\ge 0} a_n\frac{du}{u^n}+\omega_0,
+  \qquad v(\omega_0)\ge 0.
+\]
+Then $\res_u(\omega)=a_1$, while
+\[
+  \res_t(\omega)=\sum_{n\ge0}a_n\res_t(du/u^n).
+\]
+Property (iv) gives $\res_t(du/u)=1$, so it remains to prove
+\[
+  \res_t(du/u^n)=0\qquad(n\ge2).
+\]
+In characteristic zero this follows from
+\[
+  du/u^n=d\bigl(-u^{-(n-1)}/(n-1)\bigr)
+\]
+and property (iii).  In arbitrary characteristic, Serre reduces to characteristic zero by writing, after multiplying $u$ by a scalar,
+\[
+  u=t+a_2t^2+a_3t^3+\cdots.
+\]
+The coefficient of $t^{-1}$ in $du/u^n$ is a polynomial with integer coefficients in finitely many $a_i$, independent of the characteristic.  Since it vanishes over fields of characteristic zero, the principle of prolongation of algebraic identities gives the vanishing in all characteristics.
+\end{proof}
+
+\begin{remark}
+The characteristic-zero proof explains the idea: all higher principal parts $du/u^n$ for $n\ge2$ are exact.  The arbitrary-characteristic proof avoids dividing by $n-1$ and is the part that makes Serre's coefficient definition intrinsic in every characteristic.
+\end{remark}
+
+\begin{remark}[Serre's functorial variant]
+Serre also notes that the appeal to prolongation of algebraic identities can be replaced by a functorial argument.  For each commutative ring $A$ one considers $A((t))$ and its separated module of differentials over $A$, together with a residue map commuting with homomorphisms $A\to B$.  One proves the identity first over fields of characteristic zero, then over integral domains of characteristic zero by passing to fractions, and finally over arbitrary rings by presenting them as quotients of polynomial rings over $\mathbb Z$.
+\end{remark}
+
+\section{Equivalence of Tate and Serre Locally}
+
+Specialize Tate's setup to
+\[
+  V=K_p,
+  \qquad
+  A=\wideO_p.
+\]
+For every non-zero $f\in K_p$, $f\wideO_p=t^n\wideO_p$ for some $n$, so $fA\le A$.  Thus Tate's abstract residue gives a local residue
+\[
+  \res_p(f\,dg)=\res^{K_p}_{\wideO_p}(f\,dg).
+\]
+
+\begin{theorem}[Tate's local coefficient formula]
+Assume $p$ is $k$-rational, so that $\wideO_p\simeq k[[t]]$ and $K_p\simeq k((t))$.  If
+\[
+  f=\sum_{\nu\gg -\infty}a_\nu t^\nu,
+  \qquad
+  g=\sum_{\mu\gg -\infty}b_\mu t^\mu,
+\]
+then
+\[
+  \res_p(f\,dg)
+  =\text{the coefficient of }t^{-1}\text{ in }f(t)g'(t)\,dt
+  =\sum_{\mu+\nu=0}\mu a_\nu b_\mu.
+\]
+\end{theorem}
+
+\begin{proof}[Tate's proof]
+By (R2), only finitely many coefficients of $f$ and $g$ can affect the residue, so the computation reduces to Laurent polynomials.  Then
+\[
+  f\,dg=f(t)g'(t)\,dt.
+\]
+By (R3), all monomials except the $t^{-1}dt$ term have residue zero.  By (R4),
+\[
+  \res_{k[[t]]}^{k((t))}(t^{-1}\,dt)=\dim_k(k[[t]]/t k[[t]])=1.
+\]
+Therefore the residue is exactly the coefficient of $t^{-1}$.
+\end{proof}
+
+\subsection{The Monomial Computation}
+
+Take $f=t^m$ and $g=t^n$.  Then
+\[
+  f\,dg=t^m\,d(t^n)=n t^{m+n-1}\,dt.
+\]
+By the coefficient formula,
+\[
+  \res_p(t^m\,d(t^n))=
+  \begin{cases}
+    n, & m+n=0,\\
+    0, & m+n\ne 0.
+  \end{cases}
+\]
+This is the local bridge between the two definitions.  Serre's rule reads off the coefficient of $t^{-1}dt$; Tate's rule computes the same number as the trace of the finite-dimensional crossing at the boundary of $k[[t]]\subset k((t))$.
+
+For non-rational closed points, Tate's theorem as stated above does not directly give a coefficient formula over $k$.  One first works over the finite residue field extension after choosing the appropriate Laurent-series/coefficient-field description, then obtains the $k$-valued residue by the field trace $\Tr_{k(p)/k}$ when that trace is available in the stated hypotheses.  This field trace is separate from Tate's finite-potent operator trace.
+
+\section{Serre and Tate in Parallel}
+
+The point of the table is not to replace the source arguments by a dictionary.  It fixes terminology so that Serre's proofs and Tate's proofs can be read without confusing two different languages.
+
+\begin{center}
+\tiny
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{L{0.16\linewidth}L{0.18\linewidth}L{0.19\linewidth}L{0.19\linewidth}L{0.18\linewidth}}
+\toprule
+Concept & Serre terminology & Tate terminology & Modern notation & Role \\
+\midrule
+Global local data & repartition, ``adèle'' & restricted product $V_S$ & $\AX=\prod_p'K_p$ & all local expansions \\
+Local parameter & local uniformizer & prime element $t_p$ & $t\in\OO_p$ & identifies $K_p$ \\
+Completed local field & completion $F_P$ & $K_p$, integral part $A_p$ & $K_p=\Frac(\wideO_p)$ & local residue field \\
+Coefficient residue & coefficient of $T^{-1}$ & Tate Theorem 2 & $\res_p(f(t)dt)$ & concrete definition \\
+Commutator residue & not used as definition & $\Tr_V([f_1,g_1])$ & $\res_A^V(f\,dg)$ & invariant definition \\
+Divisor condition & $R(D)$ & $V(D)$ & $\AX(D)$ & pole bounds \\
+Duality pairing & $\sum_P\operatorname{Res}_P(r_P\omega)$ & $\sum_p\res_p(f_p\omega)$ & pairing on $\AX$ & linear forms \\
+Trace compatibility & trace under covering & property (R6) & $\Tr_{L/K}$ & finite morphisms \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+After this dictionary the notes return to the source proofs themselves: Serre's proof of invariance and residue theorem, and Tate's proof from the lattice identity.
+
+\section{Repartitions, Adèles, and Divisors}
+
+Serre introduces repartitions before differentials in order to reinterpret the cohomology groups appearing in Riemann--Roch.
+
+\begin{definition}[Repartitions and adèles]
+A repartition is a family $(r_p)_{p\in X}$ with $r_p\in K$ in Serre's notation and $r_p\in\OO_p$ for almost all $p$.  Passing from germs in $K$ to their images in the completions gives the same principal-part quotients used below; in modern completed notation this is the adèle space
+\[
+  \AX=\prod_p'K_p.
+\]
+The diagonal embedding sends $f\in K$ to $(f)_p\in\AX$.
+\end{definition}
+
+The completed notation is slightly more flexible than Serre's original formulation because it explicitly places the local component in $K_p$.  The almost-integrality condition is the same: outside finitely many points, the local expansion lies in $\wideO_p$.
+
+\begin{definition}[Divisor-bounded adèles]
+For $D=\sum_p n_p p$, define
+\[
+  \AX(D)=\{(f_p)_p\in\AX : v_p(f_p)+n_p\ge0\text{ for all }p\}.
+\]
+Thus $\AX(0)=\prod_p\wideO_p$.
+\end{definition}
+
+Divisors are the bookkeeping device for pole orders.  The inequality $v_p(f_p)+n_p\ge0$ says that at $p$ the component $f_p$ may have a pole of order at most $n_p$ if $n_p>0$, and must have a zero of order at least $-n_p$ if $n_p<0$.
+
+\begin{example}
+If $D=2p-q$, then $\AX(D)$ consists of adèles whose $p$-component may have a pole of order at most $2$, whose $q$-component must vanish to order at least $1$, and whose other components are integral.  The diagonal intersection $K\cap\AX(D)$ is the usual space of rational functions with divisor at least $-D$.
+\end{example}
+
+\begin{theorem}[Adèlic interpretation of $H^0$ and $H^1$]
+For a divisor $D$ on a regular proper curve $X$,
+\[
+  K\cap \AX(D)=H^0(X,\OO_X(D))
+\]
+inside $\AX$ via the diagonal embedding.  Moreover there is a canonical isomorphism
+\[
+  H^1(X,\OO_X(D))\simeq \AX/(K+\AX(D)).
+\]
+\end{theorem}
+
+\begin{proof}[Serre's proof in modern notation]
+The first identity is the definition of a rational function satisfying all local divisor inequalities: a diagonal element $f\in K$ belongs to $\AX(D)$ exactly when $v_p(f)+v_p(D)\ge0$ for all $p$, which is the condition $f\in H^0(X,\OO_X(D))$.
+
+For the cohomological statement Serre uses that $\OO_X(D)$ is a subsheaf of the constant sheaf $K$.  There is an exact sequence
+\[
+  0\longrightarrow \OO_X(D)\longrightarrow K
+  \longrightarrow K/\OO_X(D)\longrightarrow 0.
+\]
+Since $X$ is irreducible, the constant sheaf $K$ has $H^1(X,K)=0$ in Serre's argument: the nerve of every open cover of an irreducible curve is a simplex.  Since $X$ is connected, $H^0(X,K)=K$.  The quotient sheaf $K/\OO_X(D)$ is a skyscraper sheaf: a local section is zero off finitely many closed points after shrinking.  Hence
+\[
+  H^0(X,K/\OO_X(D))\simeq \AX/\AX(D).
+\]
+The long exact cohomology sequence becomes
+\[
+  K\longrightarrow \AX/\AX(D)
+  \longrightarrow H^1(X,\OO_X(D))\longrightarrow 0,
+\]
+so
+\[
+  H^1(X,\OO_X(D))\simeq \AX/(K+\AX(D)).
+\]
+Tate uses the same calculation in the special case $D=0$ to identify $\AX/(K+\AX(0))$ with $H^1(X,\OO_X)$.
+\end{proof}
+
+\subsection{Serre's Dual Repartition Spaces}
+
+Serre next takes the dual of the repartition quotient.  Let
+\[
+  I(D)=\AX/(K+\AX(D)),
+  \qquad
+  J(D)=I(D)^\vee.
+\]
+Thus an element of $J(D)$ is a $k$-linear form on $\AX$ which vanishes on $K$ and on $\AX(D)$.  If $D'\ge D$, then $\AX(D')\supset\AX(D)$ and $J(D)\supset J(D')$.  Serre writes
+\[
+  J=\bigcup_D J(D)
+\]
+and observes that multiplication by $f\in K$ carries $J(D)$ into another $J(D')$; in this way $J$ is a vector space over $K$.  Equivalently, Serre views $J$ as the topological dual of $\AX/K$ for the topology whose neighborhoods of zero are the images of the $\AX(D)$.
+
+\begin{proposition}[Serre's dimension bound for $J$]
+The $K$-vector space $J$ has dimension at most one.
+\end{proposition}
+
+\begin{proof}[Serre's proof]
+Suppose that $\alpha,\alpha'\in J$ are $K$-linearly independent.  Since the $J(D)$ form a filtered union, choose $D$ with $\alpha,\alpha'\in J(D)$.  For each divisor $d_n$ of degree $n$, multiplication gives an injection
+\[
+  L(d_n)\oplus L(d_n)
+  \longrightarrow J(D-d_n),
+  \qquad (f,g)\longmapsto f\alpha+g\alpha'.
+\]
+Thus
+\[
+  \dim_k J(D-d_n)\ge 2\ell(d_n).
+\]
+Let $d=\deg D$.  For large $n$, the divisor $D-d_n$ has negative degree, so $L(D-d_n)=0$.  Serre's first form of Riemann--Roch gives
+\[
+  \dim_k J(D-d_n)=i(D-d_n)=n+(g-1-d).
+\]
+On the other hand,
+\[
+  2\ell(d_n)\ge 2(n+1-g).
+\]
+For $n$ sufficiently large this contradicts the injection above, proving the bound.
+\end{proof}
+
+\begin{remark}
+This is not magic: $H^0$ is the intersection of all local pole conditions, while $H^1$ measures the obstruction to solving local principal-part data by a single global rational function.
+\end{remark}
+
+\section{Global Residue Theorem}
+
+\begin{theorem}[Residue theorem]
+Let $X$ be a smooth proper curve over $k$.  For every rational differential $\omega\in\OmegaK$,
+\[
+  \sum_{p\in X}\res_p(\omega)=0.
+\]
+Only finitely many terms are non-zero.
+\end{theorem}
+
+Almost all local residues vanish because a rational differential has only finitely many poles, and a regular local differential has residue zero.
+
+\subsection{Tate's Adèlic Proof}
+
+Let $S$ be a set of closed points.  Put
+\[
+  \OO(S)=\bigcap_{p\in S}\OO_p\subset K,
+\]
+\[
+  A_S=\prod_{p\in S}\wideO_p,
+  \qquad
+  V_S=\prod_{p\in S}'K_p
+  =\{(f_p) : f_p\in K_p,
+       f_p\in\wideO_p\text{ for almost all }p\in S\}.
+\]
+The function field $K$ embeds diagonally into $V_S$.
+
+\begin{proposition}[Tate's summation identity]
+For $\omega\in\OmegaK$,
+\[
+  \sum_{p\in S}\res_p(\omega)=\res_{\OO(S)}^K(\omega),
+\]
+where almost all summands vanish.
+\end{proposition}
+
+\begin{proof}[Source-based proof]
+Apply (R5) to the subspace lattice
+\[
+\begin{tikzcd}[row sep=large,column sep=large]
+& V_S \arrow[d, dash, no head] & \\
+& K+A_S \arrow[dl, dash, no head] \arrow[dr, dash, no head] & \\
+K \arrow[dr, dash, no head] && A_S \arrow[dl, dash, no head] \\
+& K\cap A_S=\OO(S) \arrow[d, dash, no head] & \\
+& 0 &
+\end{tikzcd}
+\]
+to get
+\[
+  \res_{A_S}+\res_K=\res_{\OO(S)}+\res_{K+A_S}.
+\]
+The term $\res_K$ is zero because $K$ is a $K$-module.  The term $\res_{K+A_S}$ is zero because $V_S/(K+A_S)$ is finite-dimensional, hence $K+A_S\sim V_S$ and the corresponding residue vanishes by (R1) and (R2).  Tate proves this finite-dimensionality by reducing to $S=X$: the projection $V_X\to V_S$ is surjective, and
+\[
+  V_X/(K+A_X)\simeq H^1(X,\OO_X)
+\]
+is finite-dimensional for a proper curve.
+
+It remains to identify $\res_{A_S}$ with the sum of the local residues.  For $\omega=f\,dg$, choose a finite subset $S'\subset S$ containing all poles of $f$ or $g$ and set $T=S\setminus S'$.  Then
+\[
+  V_S=V_T\times\prod_{p\in S'}K_p,
+  \qquad
+  A_S=A_T\times\prod_{p\in S'}\wideO_p.
+\]
+By (R5),
+\[
+  \res_{A_S}(f\,dg)=\res_{A_T}(f\,dg)+\sum_{p\in S'}\res_p(f\,dg).
+\]
+The first term is zero by (R2), and the omitted local residues vanish by the choice of $S'$.
+\end{proof}
+
+Taking $S=X$, properness enters through the finiteness of both $H^0$ and $H^1$.  The $H^1$ finiteness has just killed $\res_{K+A_S}$; the $H^0$ finiteness now gives $\OO(X)=H^0(X,\OO_X)$ finite-dimensional over $k$.  Hence $\OO(X)\sim 0$ in Tate's sense, and $\res_{\OO(X)}=0$.  Therefore
+\[
+  \sum_{p\in X}\res_p(\omega)=0.
+\]
+The finite-dimensionality of $V_X/(K+A_X)$ used above is the adèlic form of
+\[
+  V_X/(K+A_X)\simeq H^1(X,\OO_X),
+\]
+which is finite-dimensional for a proper curve.
+
+\subsection{Serre's Reduction to the Projective Line}
+
+Serre's proof of the residue formula is Hasse's proof: first prove the theorem on the projective line, then reduce every curve to that case by a separable covering and a trace formula for residues.  Serre works here over an algebraically closed base field.  In positive characteristic he chooses the nonconstant function $\phi$ so that $K/k(\phi)$ is separable; equivalently, in Serre's notation, $\phi\notin K^p$.  This is the hypothesis under which his trace of differentials is the usual separable field trace construction.
+
+\begin{lemma}[Serre: the projective line]
+The residue formula holds on $\mathbb P^1_k$.
+\end{lemma}
+
+\begin{proof}[Serre's proof]
+Let $t$ be the identity coordinate, so $k(\mathbb P^1)=k(t)$.  Every differential can be written $f(t)\,dt$, and by partial fractions it is enough to consider
+\[
+  f=t^n\quad(n\ge0)
+  \qquad\text{or}\qquad
+  f=(t-a)^{-n}\quad(n\ge1).
+\]
+For $f=t^n$, the only pole is at infinity.  With $u=1/t$ one has
+\[
+  t^n\,dt=-u^{-n-2}\,du,
+\]
+whose residue at infinity is zero.  For $f=(t-a)^{-1}$, the differential $dt/(t-a)$ has residues $1$ at $a$ and $-1$ at infinity.  For $f=(t-a)^{-n}$ with $n\ge2$, the only pole is at $a$ and the residue is zero.  These cases exhaust the partial fraction decomposition.
+\end{proof}
+
+Let $X$ now be any curve in Serre's setting.  Choose a nonconstant function $\phi$ and write
+\[
+  E=k(\phi)=k(\mathbb P^1),
+  \qquad
+  F=k(X).
+\]
+Serre assumes $F/E$ separable.  If $\operatorname{char}k=p>0$, he explains this by saying that if $F'$ is the largest separable extension of $E$ contained in $F$, then $F'=F^{p^n}$ for some $n$; hence the separable case is exactly $\phi\notin F^p$, after replacing the chosen function if necessary in the proof.
+
+For a differential $\omega\in D_k(F)$, write
+\[
+  \omega=f\,d\phi.
+\]
+Since $d\phi$ is an $E$-basis of $D_k(E)$ and $F/E$ is separable, the natural map
+\[
+  D_k(E)\otimes_E F\longrightarrow D_k(F)
+\]
+is an isomorphism.  The field trace therefore defines the trace of a differential by
+\[
+  \Tr_{F/E}(f\,d\phi)=\Tr_{F/E}(f)\,d\phi.
+\]
+
+\begin{lemma}[Serre's semilocal trace formula]
+For every point $P\in\mathbb P^1$,
+\[
+  \sum_{Q\mapsto P}\res_Q(\omega)
+  =\res_P(\Tr_{F/E}\omega).
+\]
+\end{lemma}
+
+\begin{proof}[Reduction to the local lemma]
+Let $E_P$ be the completion of $E$ at $P$, and let $F_Q$ be the completions of $F$ at the points $Q$ above $P$.  The valuations $v_Q$ extend $v_P$, and the completed algebra decomposes as
+\[
+  F\otimes_E E_P\simeq \prod_{Q\mapsto P}F_Q.
+\]
+Consequently
+\[
+  \Tr_{F/E}(f)=\sum_{Q\mapsto P}\Tr_{F_Q/E_P}(f)
+\]
+after completion.  By additivity of residues, the desired formula reduces to the local identity, with $u=\phi$ as a local parameter on the base,
+\[
+  \res_Q(f\,du)=\res_P(\Tr_{F_Q/E_P}(f)\,du).
+\]
+This is Serre's Lemma 5, proved in the next section.
+\end{proof}
+
+Assuming the local lemma, Serre finishes the proof as follows:
+\[
+  \sum_{Q\in X}\res_Q(\omega)
+  =\sum_{P\in\mathbb P^1}\res_P(\Tr_{F/E}\omega)=0,
+\]
+the last equality being the projective-line case.
+
+\begin{remark}
+Serre notes that the preceding reduction does not use that the target is $\mathbb P^1$; it proves the same trace formula for any separable covering of curves.  He also notes that the converse direction is possible: from the residue formula, proved for instance by transcendental methods or by the Cartier operator, one can deduce the trace formula, and with a suitable definition of trace of differentials it extends to inseparable coverings.
+\end{remark}
+
+\section{Trace Under Finite Morphisms}
+
+This section separates two meanings of trace.
+
+\begin{itemize}
+\item $\Tr_V$ is Tate's trace of a finite-potent endomorphism of a possibly infinite-dimensional $k$-vector space.
+\item $\Tr_{L/K}$ is the field trace of a finite field extension.
+\item $\res_p$ is the residue map; it is neither trace, although it is constructed from $\Tr_V$ in Tate's definition and is compatible with $\Tr_{L/K}$.
+\end{itemize}
+
+\begin{theorem}[Residues and field trace]
+In Tate's formulation, let $X'\to X$ be a surjective morphism of regular proper curves corresponding to a finite inclusion of function fields $K\subset K'$.  For $f'\in K'$, $g\in K$, and $p\in X$,
+\[
+  \sum_{p'\mapsto p}\res_{p'}(f'\,dg)
+  =\res_p(\Tr_{K'/K}(f')\,dg).
+\]
+Equivalently, after completing at $p$ and summing over the branches above $p$,
+\[
+  \sum_{p'\mapsto p}\res_{p'}(f'_{p'}\,dg)
+  =\res_p\!\left(\sum_{p'\mapsto p}\Tr_{K'_{p'}/K_p}(f'_{p'})\,dg\right).
+\]
+\end{theorem}
+
+\begin{proof}[Tate's proof from (R6)]
+Tate derives the formula from property (R6).  The integral closure of $\OO_p$ in $K'$ and the corresponding completed integral closures are finite modules over the relevant local rings.  Therefore the lattice obtained from $\wideO_p$ by extension of scalars is commensurable with the product of the lattices above $p$.  Applying (R6) gives the equality between residue after field trace and the sum of local residues.
+\end{proof}
+
+\subsection{Serre's Local Lemma}
+
+Serre's proof of the compatibility uses the separable case.  Let $L/K$ be a finite separable extension of Laurent-series fields over the same algebraically closed field $k$.  Let $u$ be a uniformizer of $K$ and $t$ a uniformizer of $L$.  The identity to prove is
+\[
+  \res_t(f\,du)=\res_u(\Tr_{L/K}(f)\,du)
+  \qquad(f\in L).
+\]
+It is enough to prove this for $f=t^n$, $n\in\mathbb Z$.
+
+\begin{proof}[Serre's proof]
+First suppose $\operatorname{char}k=0$.  If $e=[L:K]$, then $v_L(u)=e$.  Replacing $t$ by a suitable uniformizer, Serre reduces to
+\[
+  u=t^e.
+\]
+Then
+\[
+  \Tr_{L/K}(t^n)=
+  \begin{cases}
+    0, & n\not\equiv0\pmod e,\\
+    e u^{n/e}, & n\equiv0\pmod e.
+  \end{cases}
+\]
+Hence
+\[
+  \res_u(\Tr(t^n)\,du)=
+  \begin{cases}
+    0, & n\ne -e,\\
+    e, & n=-e,
+  \end{cases}
+\]
+while
+\[
+  \res_t(t^n\,du)=\res_t(e t^{n+e-1}\,dt)=
+  \begin{cases}
+    0, & n\ne -e,\\
+    e, & n=-e.
+  \end{cases}
+\]
+Thus the formula holds in characteristic zero.
+
+For arbitrary characteristic, write
+\[
+  u=t^e+\sum_{i>e}a_i t^i.
+\]
+Conversely, such a series defines a subfield $k((u))\subset k((t))$ of degree $e$, and the extension is separable exactly when
+\[
+  u\notin k((t^p))
+\]
+in characteristic $p$.  The elements $1,t,\ldots,t^{e-1}$ form a basis of $k((t))$ over $k((u))$.  For each $n\in\mathbb Z$ write
+\[
+  t^n t^i=\sum_{j=0}^{e-1} b_{n,i,j}(u)t^j,
+  \qquad 0\le i\le e-1,
+\]
+with
+\[
+  b_{n,i,j}(u)=\sum_k b_{n,i,j,k}u^k.
+\]
+The matrix $(b_{n,i,j}(u))$ is the matrix of multiplication by $t^n$ in the regular representation, so
+\[
+  \Tr(t^n)=\sum_{i=0}^{e-1}b_{n,i,i}(u),
+  \qquad
+  c_n:=\res_u(\Tr(t^n)\,du)=\sum_{i=0}^{e-1}b_{n,i,i,-1}.
+\]
+On the other hand, directly from the expansion of $u$,
+\[
+  \res_t(t^n\,du)=-n a_{-n},
+\]
+where Serre agrees to put $a_e=1$ and $a_i=0$ for $i<e$.  The desired identity is therefore equivalent to
+\[
+  c_n=-n a_{-n}
+  \qquad(n\in\mathbb Z).
+\]
+All coefficients $b_{n,i,j,k}$, and hence $c_n+n a_{-n}$, are polynomials with integer coefficients in the finitely many $a_i$ which occur.  The characteristic-zero computation says that these polynomials vanish whenever the $a_i$ are specialized in an algebraically closed field of characteristic zero.  By the principle of prolongation of algebraic identities, they vanish identically.  This proves the local trace formula in all characteristics and therefore completes Serre's residue formula proof.
+\end{proof}
+
+\section{Duality}
+
+Serre's duality theorem is expressed directly in the language of repartitions.  A rational differential defines a linear functional on repartitions by summing local residues.
+
+For a rational differential $\omega$ and an adèle $r=(r_p)_p\in\AX$, define
+\[
+  (\omega,r)=\sum_{p\in X}\res_p(r_p\omega).
+\]
+The sum is finite because $r_p\in\wideO_p$ for almost all $p$ and $\omega$ has finitely many poles.  Serre records three formal properties:
+\begin{enumerate}[label=(\alph*)]
+\item $(\omega,r)=0$ if $r\in K$, by the residue formula.
+\item $(\omega,r)=0$ if $r\in\AX(D)$ and $\omega\in\Omega(D)$, because each local product is regular.
+\item If $f\in K$, then $(f\omega,r)=(\omega,fr)$.
+\end{enumerate}
+Here $\Omega(D)$ denotes Serre's vector space of zero together with the differentials $\omega\ne0$ whose divisor satisfies $(\omega)\ge D$.
+
+Let
+\[
+  B(\omega)(r)=(\omega,r).
+\]
+Properties (a) and (b) say that if $\omega\in\Omega(D)$, then $B(\omega)\in J(D)$, where $J(D)$ is the dual of $\AX/(K+\AX(D))$.
+
+\begin{theorem}[Serre's duality theorem]
+For every divisor $D$, the map
+\[
+  B\colon \Omega(D)\longrightarrow J(D)
+\]
+is an isomorphism.  Equivalently, the residue pairing puts
+\[
+  \Omega(D)
+  \quad\text{and}\quad
+  I(D)=\AX/(K+\AX(D))
+\]
+in duality.
+\end{theorem}
+
+\begin{proof}[Serre's proof]
+The key lemma is local.  If $B(\omega)\in J(D)$, then $\omega\in\Omega(D)$.  Indeed, otherwise there is a point $p$ with $v_p(\omega)<v_p(D)$.  Put $n=v_p(\omega)+1$ and choose a repartition $r$ with all components zero except
+\[
+  r_p=t^{-n},
+\]
+where $t$ is a local uniformizer at $p$.  Then $v_p(r_p\omega)=-1$, so $\res_p(r_p\omega)\ne0$, whereas $r\in\AX(D)$; this contradicts the assumption that $B(\omega)$ vanishes on $\AX(D)$.
+
+Injectivity follows by applying the lemma for every divisor $D$: if $B(\omega)=0$, then $\omega$ lies in every $\Omega(D)$, hence $\omega=0$.  For surjectivity, Serre uses property (c) to view $B$ as a $K$-linear map from the one-dimensional $K$-vector space of differentials into $J$.  Since $\dim_K J\le1$ and the map is nonzero, its image is all of $J$.  If $\alpha\in J(D)$, choose $\omega$ with $B(\omega)=\alpha$; the lemma gives $\omega\in\Omega(D)$.
+\end{proof}
+
+\begin{corollary}[Modern Serre duality form]
+For a smooth proper curve $X/k$ and an invertible sheaf $\mathcal L$ on $X$,
+\[
+  H^1(X,\mathcal L)^\vee
+  \simeq
+  H^0(X,\Omega^1_{X/k}\otimes \mathcal L^{-1}).
+\]
+Under the adèlic description of $H^1$, this isomorphism is induced by the same sum of local residues.
+\end{corollary}
+
+\begin{source}
+Tate sketches a dualizing sheaf $\mathcal J_{X/k}$ as follows.  Its generic stalk consists of the $k$-linear functionals
+\[
+  \lambda\in\Hom_k(\AX,k)
+\]
+which annihilate $K+\AX(D)$ for some divisor $D$.  At a closed point $p$ the local stalk is described by the condition that $\lambda$ vanish on the integral local factor $\wideO_p$; sections over an open set are intersections of these local conditions.  In this setup the duality
+\[
+  H^0(\mathcal J_{X/k}(-D))
+  \simeq
+  H^1(X,\OO_X(D))^\vee
+\]
+is tautological from the adèlic quotient.
+
+The residue map gives a canonical morphism
+\[
+  \Omega^1_{X/k}\longrightarrow \mathcal J_{X/k},
+  \qquad
+  \omega\longmapsto (f\mapsto \sum_p\res_p(f_p\omega)).
+\]
+At smooth points this map is an isomorphism; hence for smooth $X$ the dualizing sheaf is $\Omega^1_{X/k}$.
+\end{source}
+
+\begin{remark}[Consequences in Serre]
+Serre immediately obtains $i(D)=\dim_k\Omega(D)$.  In particular the genus is the dimension of the space of everywhere regular differentials.  Since any two nonzero rational differentials differ by multiplication by an element of $K^\times$, their divisors are linearly equivalent; this is the canonical class, and the definitive Riemann--Roch formula becomes
+\[
+  \ell(D)-\ell(K_X-D)=\deg D+1-g.
+\]
+Serre also interprets the residue pairing as a cup product with values in the one-dimensional space $H^1(X,\Omega^1_{X/k})$.
+\end{remark}
+
+\section{Summary Diagram}
+
+\[
+\begin{tikzcd}[column sep=large,row sep=large]
+(\OO_p,\wideO_p,K_p) \arrow[r,"t\text{ uniformizer}"] \arrow[d,"A=\wideO_p\subset V=K_p"']
+& k(p)((t)) \arrow[d,"\text{coefficient of }t^{-1}"] \\
+\res_A^V(f\,dg)=\Tr_V([f_1,g_1]) \arrow[r,"\text{Tate = Serre locally}"']
+& \res_p(f\,dg)
+\end{tikzcd}
+\]
+
+\[
+\begin{tikzcd}[column sep=large,row sep=large]
+\{K_p\}_p \arrow[r,"\text{restricted product}"]
+& \AX \arrow[r,"\sum_p\res_p"] \arrow[d,"\AX(D)\text{ imposes pole bounds}"']
+& k \\
+& H^1(X,\OO_X(D))\simeq \AX/(K+\AX(D)) \arrow[ur,"\text{duality pairing}"'] &
+\end{tikzcd}
+\]
+
+\begin{center}
+\small
+\begin{tabular}{L{0.23\linewidth}L{0.65\linewidth}}
+\toprule
+Local completions & Provide Laurent expansions and local residues. \\
+Tate lattices & Make residues intrinsic by finite-potent traces of commutators. \\
+Adèles/repartitions & Assemble all local fields so the global sum is one functional. \\
+Divisors & Encode local pole-order constraints through $\AX(D)$. \\
+Residue pairing & Realizes the duality between $H^1$ and differentials. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
