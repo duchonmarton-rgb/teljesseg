@@ -1,0 +1,107 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage[magyar]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\newtheorem{tetel}{Tétel}[section]
+\newtheorem{allitas}[tetel]{Állítás}
+\newtheorem{lemma}[tetel]{Lemma}
+\newtheorem{kovetkezmeny}[tetel]{Következmény}
+
+\theoremstyle{definition}
+\newtheorem{definicio}[tetel]{Definíció}
+\newtheorem{pelda}[tetel]{Példa}
+\newtheorem{megjegyzes}[tetel]{Megjegyzés}
+
+\renewcommand{\proofname}{Bizonyítás}
+
+\DeclareMathOperator{\Frac}{Frac}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\length}{length}
+
+\newcommand{\OO}{\mathcal O}
+\newcommand{\mm}{\mathfrak m}
+\newcommand{\pp}{\mathfrak p}
+\newcommand{\qq}{\mathfrak q}
+\newcommand{\ZZ}{\mathbb Z}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\kk}{\Bbbk}
+
+\title{Értékelések és értékelésgyűrűk\\
+\large Különös tekintettel a diszkrét értékelésgyűrűkre}
+\author{Előadásjegyzet az Algebrai Görbék c. tárgyhoz}
+\date{}
+
+\begin{document}
+
+
+
+
+
+\section{Teljesség, Cohen struktúratétele}
+
+\subsection{Mikor legyen teljes egy DVR?}
+
+Egy testen definiálhatunk egy normát egy adott diszkrét értékelésből.
+
+\begin{definicio}
+Legyen $F$ test, $\nu: F^{\times}:\rightarrow\mathbb{Z}$ értékelés, és $c\in\mathbb{R}_{>1}$ rögzített szám. Ekkor minden $x\in F^{\times}$-nek definiáljuk a következő normáját:
+$$||x||_{\nu}:=c^{\nu(x)}\in\mathbb{R}_{\ge0}.$$
+Továbbá a $0$ normája természetes módon
+$$||0||_{\nu}=c^{-\infty}=0.$$
+\end{definicio}
+
+Azért hívjuk normának, mert pontosan a $0$-n vesz fel $0$-t, és multiplikatív. Továbbá az alábbi állításban szereplő harmadik tulajdonság, az {\it ultrametrikus egyenlőtlenség} okán nemarkhimédeszi normának is hívjuk.
+
+\begin{allitas}
+A fenti $||\cdot ||_{\nu}$ egy {\it nemarkhimédeszi norma}, azaz minden $x,y\in F$-re
+\begin{enumerate}
+\item $||x||_{\nu}=0\Leftrightarrow x=0$,
+\item $||xy||_{\nu}=||x||_{\nu}\cdot ||y||_{\nu}$,
+\item $||x+y||_{nu}\le\max\{||x||_{\nu},||y||_{\nu}\}$.
+\end{enumerate}
+\end{allitas}
+\begin{proof}
+Az 1. állítás teljesen világos.
+
+A 2. állításhoz felírjuk, hogy a diszkrét értékelés definíciója szerint $\nu(xy)=\nu(x)+\nu(y)$. Innen $c^{\nu(x)+\nu(y)}=c^{\nu(x)}c^{\nu(y)}$, és ez kellett.
+
+A 3. állításhoz felírjuk, hogy a diszkrét értékelés definíciója szerint $\nu(x+y)\le\max\{\nu(x),\nu(y)\}$, majd használjuk a $c^{\cdot}$ függvény monotonitását (ami $c>1$ miatt igaz).
+\end{proof}
+
+Mivel az ultrametrikus egyenlőtlenségből következik a háromszög-egyenlőtlenség, ez a norma indukál egy metrikát, amivel $F$ metrikus tér lesz. Így definiálható $F$ teljessége, ebből pedig a megfelelő DVR teljessége is.
+
+\begin{definicio}
+Az $F$ {\it teljes} a $||\cdot ||_{\nu}$ normára nézve, ha a normára nézve minden Cauchy-sorozat konvergál. Az $\OO_{\nu}$ DVR {\it teljes}, ha $F$ teljes a $||\cdot ||_{\nu}$ normára nézve.
+\end{definicio}
+
+\subsection{Cohen struktúratétele}
+
+Cohen struktúratétele azt írja le, hogy egy algebrai görbe lokálisan szinte mindenhol ugyanúgy néz ki.
+
+\begin{tetel}[Cohen struktúratétele]
+Legyen $A$ egy DVR, $m\triangleleft A$, és $k=A/m$ az $A$ maradékteste. Tegyük fel, hogy $k\subseteq A$, $k\hookrightarrow A\twoheadrightarrow A/m$ izomorfizmus, továbbá $A$ teljes. Ekkor $A\cong k[[t]]$.
+\end{tetel}
+
+Ezt most nem bizonyítjuk.
+
+
+
+
+
+
+
+
+
+
+\end{document}
