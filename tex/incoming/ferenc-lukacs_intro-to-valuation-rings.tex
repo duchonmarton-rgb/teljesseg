@@ -1,0 +1,552 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage[magyar]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\newtheorem{tetel}{Tétel}[section]
+\newtheorem{allitas}[tetel]{Állítás}
+\newtheorem{lemma}[tetel]{Lemma}
+\newtheorem{kovetkezmeny}[tetel]{Következmény}
+
+\theoremstyle{definition}
+\newtheorem{definicio}[tetel]{Definíció}
+\newtheorem{pelda}[tetel]{Példa}
+\newtheorem{megjegyzes}[tetel]{Megjegyzés}
+
+\renewcommand{\proofname}{Bizonyítás}
+
+\DeclareMathOperator{\Frac}{Frac}
+\DeclareMathOperator{\Spec}{Spec}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\length}{length}
+
+\newcommand{\OO}{\mathcal O}
+\newcommand{\mm}{\mathfrak m}
+\newcommand{\pp}{\mathfrak p}
+\newcommand{\qq}{\mathfrak q}
+\newcommand{\ZZ}{\mathbb Z}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\kk}{\Bbbk}
+
+\title{Értékelések és értékelésgyűrűk\\
+\large Különös tekintettel a diszkrét értékelésgyűrűkre}
+\author{Előadásjegyzet az Algebrai Görbék c. tárgyhoz}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Értékelések}
+
+\subsection{Rendezett abel-csoportok}
+
+\begin{definicio}
+Egy $\Gamma$ abel-csoportot \emph{rendezett abel-csoportnak} nevezünk,
+ha el van látva egy teljes rendezéssel, és a rendezés kompatibilis a
+csoportművelettel: ha $\alpha\leq \beta$, akkor minden
+$\gamma\in\Gamma$ esetén
+\[
+  \alpha+\gamma\leq \beta+\gamma.
+\]
+\end{definicio}
+
+Az értékelések értékkészletét egy ilyen $\Gamma$ csoport
+adja. A legfontosabb eset számunkra a $\Gamma=\ZZ$ ellátva a szokásos
+rendezéssel. Ekkor beszélünk diszkrét értékelésről.
+
+Formálisan hasznos a $\Gamma$ csoportot kiegészíteni egy $\infty$
+elemmel, amelyre
+\[
+  \alpha < \infty,\qquad
+  \alpha+\infty=\infty+\alpha=\infty
+\]
+minden $\alpha\in\Gamma$ esetén. Így kényelmesen definiálhatjuk
+$v(0)=\infty$ értéket.
+
+\subsection{Értékelések definíciója}
+
+\begin{definicio}
+\label{def:ertekeles}
+Legyen $K$ test, $\Gamma$ rendezett abel-csoport. Egy
+\emph{értékelés} a $K$ testen egy olyan
+\[
+  v:K^\times\longrightarrow \Gamma
+\]
+leképezés, amelyre minden $x,y\in K^\times$ esetén
+\[
+  v(xy)=v(x)+v(y),
+\]
+továbbá ha $x+y\neq 0$, akkor
+\[
+  v(x+y)\geq \min\{v(x),v(y)\}.
+\]
+Megállapodás szerint $v(0)=\infty$.
+\end{definicio}
+
+Az első tulajdonság azt mondja, hogy $v$ csoporthomomorfizmus
+$K^\times$ multiplikatív csoportjából $\Gamma$ additív csoportjába. A
+második tulajdonság az ultrametrikus háromszög-egyenlőtlenség
+additív alakja.
+
+\begin{allitas}
+Legyen $v$ értékelés $K$-n. Ekkor:
+\begin{enumerate}
+  \item $v(1)=0$ és $v(-1)=0$;
+  \item $v(x^{-1})=-v(x)$ minden $x\in K^\times$ esetén;
+  \item ha $v(x)\neq v(y)$, akkor $v(x+y)=\min\{v(x),v(y)\}$.
+\end{enumerate}
+\end{allitas}
+
+\begin{proof}
+Az $1\cdot 1=1$ azonosságból
+$v(1)=v(1)+v(1)$, tehát $v(1)=0$. Mivel $(-1)^2=1$,
+$2v(-1)=0$, ezért $v(-1)=0$ rendezett abel-csoportban, hiszen abban
+nincs torzió. Az $xx^{-1}=1$ azonosságból adódik
+$v(x)+v(x^{-1})=0$, tehát $v(x^{-1})=-v(x)$.
+
+Tegyük fel, hogy $v(x)<v(y)$. A \ref{def:ertekeles}. definícióban
+szereplő egyenlőtlenség szerint $v(x+y)\geq v(x)$. Ha szigorú
+egyenlőtlenség állna fenn, akkor
+\[
+  v(y)=v((x+y)-x)\geq \min\{v(x+y),v(x)\}=v(x),
+\]
+ami ellentmond a kiinduló feltevésnek, következésképpen
+$v(x+y)=v(x)$.
+\end{proof}
+
+\begin{definicio}
+Az értékelés \emph{értékcsoportja} a $v(K^\times)\subseteq\Gamma$
+rendezett részcsoport. Az értékelés \emph{triviális}, ha
+$v(x)=0$ minden $x\in K^\times$ esetén.
+\end{definicio}
+
+
+\section{Értékelésgyűrűk}
+
+\subsection{Az értékeléshez tartozó gyűrű}
+
+\begin{definicio}
+Legyen $v$ értékelés a $K$ testen. Az
+\[
+  \OO_v=\{x\in K\mid v(x)\geq 0\}
+\]
+részgyűrűt a $v$ értékelés \emph{értékelésgyűrűjének} nevezzük. Az
+\[
+  \mm_v=\{x\in K\mid v(x)>0\}
+\]
+ideált az \emph{értékeléshez tartozó maximális ideálnak} nevezzük.
+\end{definicio}
+
+\begin{allitas}
+Az $\OO_v$ értékelésgyűrű lokális integritási tartomány, maximális ideálja
+$\mm_v$, egységcsoportja pedig
+\[
+  \OO_v^\times=\{x\in K^\times\mid v(x)=0\}.
+\]
+Továbbá $\Frac(\OO_v)=K$.
+\end{allitas}
+
+\begin{proof}
+Az értékelés tulajdonságaiból közvetlenül következik, hogy $\OO_v$
+zárt az összeadásra és szorzásra, továbbá $1\in\OO_v$. Mivel
+$\OO_v\subseteq K$, ezért $\OO_v$ is integritási tartomány.
+
+Ha $x\in\OO_v$ és $v(x)=0$, akkor $v(x^{-1})=0$, tehát
+$x^{-1}\in\OO_v$, vagyis $x$ egység. Ha $v(x)>0$, akkor
+$v(x^{-1})<0$, tehát $x^{-1}\notin\OO_v$, azaz $x$ nem egység.
+Így az egységek pontosan a
+$0$ értékelésű elemek, a nemegységek pedig pontosan $\mm_v$ elemei. Egy
+gyűrű pontosan akkor lokális, ha a nemegységek halmaza ideál; itt ez
+az $\mm_v$ ideálra teljesül.
+
+Végül ha $x\in K^\times$, akkor vagy $v(x)\geq 0$, és ekkor
+$x\in\OO_v$, vagy $v(x)<0$, és ekkor $v(x^{-1})>0$, tehát
+$x^{-1}\in\OO_v$. Így minden $K$-beli elem két $\OO_v$-beli elem
+hányadosaként írható, tehát $\Frac(\OO_v)=K$.
+\end{proof}
+
+\begin{tetel}[Értékelésgyűrűk intrinzikus jellemzése]
+Legyen $K$ test, és legyen $R\subseteq K$ olyan részgyűrű, amelyre
+$\Frac(R)=K$. Ekkor $R$ pontosan akkor valamely értékelés
+értékelésgyűrűje, ha minden $x\in K^\times$ esetén
+\[
+  x\in R \quad\text{vagy}\quad x^{-1}\in R.
+\]
+\end{tetel}
+
+\begin{proof}
+Ha $R=\OO_v$, akkor az állítás az előző bizonyítás végén már
+megjelent.
+
+Fordítva tegyük fel, hogy $R$ rendelkezik a fenti tulajdonsággal.
+Tekintsük a $K^\times/R^\times$ faktorcsoportot. Egyelőre
+multiplikatív jelölést használunk, de rendezett abel-csoportként
+később additív jelölésre térhetünk át. A rendezést definiáljuk úgy,
+hogy
+\[
+  xR^\times\geq yR^\times
+  \quad\Longleftrightarrow\quad
+  xy^{-1}\in R.
+\]
+Ez jól definiált, mert egységgel való szorzás nem változtatja meg az
+$R$-beli tagságot. A rendezés teljes, hiszen minden
+$xy^{-1}\in K^\times$ elemre vagy $xy^{-1}\in R$, vagy
+$(xy^{-1})^{-1}=yx^{-1}\in R$. Antiszimmetrikus is: ha
+$xy^{-1}\in R$ és $yx^{-1}\in R$, akkor $xy^{-1}$ egység $R$-ben,
+tehát $xR^\times=yR^\times$. A tranzitivitás és a csoportművelettel
+való kompatibilitás közvetlenül következik abból, hogy $R$ gyűrű.
+
+A
+\[
+  v:K^\times\longrightarrow K^\times/R^\times,\qquad
+  x\longmapsto xR^\times
+\]
+leképezés csoporthomomorfizmus. Ha $x+y\neq 0$ és például
+$v(x)\geq v(y)$, akkor $xy^{-1}\in R$, ezért
+\[
+  (x+y)y^{-1}=xy^{-1}+1\in R.
+\]
+Ez azt jelenti, hogy $v(x+y)\geq v(y)=\min\{v(x),v(y)\}$. A másik
+eset ugyanilyen. Így $v$ értékelés, és definíció szerint
+\[
+  \OO_v=\{x\in K\mid v(x)\geq v(1)\}=R.
+\]
+\end{proof}
+
+\begin{megjegyzes}
+A fenti tétel miatt az értékelésgyűrűt gyakran azzal a
+tulajdonsággal is definiálják, hogy minden $x\in K^\times$ elemre
+$x$ vagy $x^{-1}$ benne van a gyűrűben. Ez a megfogalmazás nagyon
+hasznos, amikor nem egy konkrét képlettel adott értékelésből indulunk
+ki, hanem egy lokális gyűrű tulajdonságait vizsgáljuk.
+\end{megjegyzes}
+
+\subsection{Alapvető tulajdonságok}
+
+\begin{allitas}
+Egy értékelésgyűrű ideáljai lineárisan rendezettek a tartalmazásra
+nézve: ha $I,J\subseteq\OO_v$ ideálok, akkor $I\subseteq J$ vagy
+$J\subseteq I$.
+\end{allitas}
+
+\begin{proof}
+Tegyük fel, hogy $I\not\subseteq J$. Válasszunk $a\in I\setminus J$
+elemet. Megmutatjuk, hogy $J\subseteq I$. Legyen $b\in J$. Ha
+$b=0$, nincs mit bizonyítani. Ha $b\neq 0$, akkor $a/b\notin\OO_v$,
+mert ellenkező esetben $a=(a/b)b\in J$ lenne. Értékelésgyűrűről
+lévén szó, ebből $b/a\in\OO_v$ következik. Így
+$b=(b/a)a\in I$, tehát $J\subseteq I$.
+\end{proof}
+
+\begin{kovetkezmeny}
+Egy értékelésgyűrű prímideáljai lineárisan rendezettek. Konkrétan
+egy értékelésgyűrű spektruma lánc.
+\end{kovetkezmeny}
+
+\begin{allitas}
+Minden értékelésgyűrű egészzárt a hányadostestében.
+\end{allitas}
+
+\begin{proof}
+Legyen $R=\OO_v$, $K=\Frac(R)$, és tegyük fel, hogy
+$x\in K$ egész $R$ fölött. Ha $x\notin R$, akkor
+$x^{-1}\in R$ és $v(x)<0$. Mivel $x$ egész $R$ fölött, teljesít egy
+olyan egyenletet, hogy
+\[
+  x^n+a_{n-1}x^{n-1}+\cdots+a_1x+a_0=0,
+  \qquad a_i\in R.
+\]
+Osszunk $x^{n-1}$-gyel:
+\[
+  x=-(a_{n-1}+a_{n-2}x^{-1}+\cdots+a_0x^{-(n-1)}).
+\]
+A jobb oldal $R$-ben van, hiszen $a_i\in R$ és $x^{-1}\in R$. Ez
+ellentmond $x\notin R$-nek. Tehát $x\in R$, vagyis $R$ egészzárt.
+\end{proof}
+
+\section{Diszkrét értékelések}
+
+\subsection{Definíció és normalizálás}
+
+\begin{definicio}
+Egy $v:K^\times\to\Gamma$ értékelés \emph{diszkrét értékelés}, ha
+nem triviális, és értékcsoportja rendezett csoportként izomorf
+$\ZZ$-vel. Ilyenkor a választott izomorfizmus után úgy tekintjük, hogy
+\[
+  v:K^\times\longrightarrow \ZZ.
+\]
+Ha $v(K^\times)=\ZZ$, akkor $v$-t \emph{normalizált} diszkrét
+értékelésnek nevezzük.
+\end{definicio}
+
+Ha az értékcsoport $\ZZ$ egy $e\ZZ$ részcsoportja, akkor az értékelést
+$e$-vel osztva normalizálhatjuk. A gyakorlatban diszkrét értékelés
+alatt legtöbbször normalizált diszkrét értékelést értünk.
+
+\begin{definicio}
+Legyen $v$ normalizált diszkrét értékelés $K$-n, értékelésgyűrűje
+$R=\OO_v$, maximális ideálja $\mm=\mm_v$. Egy $\pi\in R$ elemet
+\emph{uniformizálónak} vagy \emph{lokális paraméternek} nevezünk, ha
+\[
+  v(\pi)=1.
+\]
+\end{definicio}
+
+\begin{allitas}
+Legyen $R=\OO_v$ a $v$ normalizált diszkrét értékeléshez tartozó
+értékelésgyűrű, és legyen
+$\pi$ uniformizáló. Ekkor minden $x\in K^\times$ egyértelműen írható
+\[
+  x=u\pi^n
+\]
+alakban, ahol $u\in R^\times$ és $n\in\ZZ$. Továbbá $x\in R$ pontosan
+akkor, ha $n\geq 0$, és $x\in\mm$ pontosan akkor, ha $n>0$.
+\end{allitas}
+
+\begin{proof}
+Legyen $n=v(x)$. Ekkor
+\[
+  v(x\pi^{-n})=v(x)-n v(\pi)=0,
+\]
+tehát $u=x\pi^{-n}\in R^\times$, és $x=u\pi^n$. Az egyértelműség
+abból következik, hogy ha $u\pi^n=u'\pi^{n'}$, akkor az értékelést
+véve $n=n'$, majd $u=x\pi^{-n}=u'$. A tagsági állítások közvetlenül következnek
+az értékelésgyűrű és a maximális ideál definíciójából.
+\end{proof}
+
+\begin{kovetkezmeny}
+Ha $R$ diszkrét értékelésgyűrű és $\pi$ uniformizáló, akkor
+\[
+  \mm=(\pi),
+  \qquad
+  \mm^n=(\pi^n)\quad (n\geq 1).
+\]
+\end{kovetkezmeny}
+
+\begin{proof}
+Az $\mm$ elemei pontosan azok az $u\pi^n$ alakú elemek, ahol
+$n\geq 1$, tehát mind oszthatók $\pi$-vel. Mivel $\pi\in\mm$,
+$\mm=(\pi)$. A hatványokra vonatkozó állítás ebből következik.
+\end{proof}
+
+\subsection{A DVR mint lokális főideálgyűrű}
+
+\begin{definicio}
+Egy $R$ integritási tartományt \emph{diszkrét értékelésgyűrűnek},
+röviden \emph{DVR-nek}, nevezünk, ha $R$ egy normalizált diszkrét
+értékeléshez tartozó értékelésgyűrű.
+\end{definicio}
+
+\begin{tetel}[A DVR-ek ideáljai]
+Legyen $R$ DVR, $\pi$ uniformizáló, $\mm=(\pi)$ maximális ideál.
+Ekkor $R$ minden nem nulla ideálja $\mm^n=(\pi^n)$ alakú egy
+egyértelmű $n\geq 0$ egészre. Következésképpen $R$ noether lokális
+főideálgyűrű.
+\end{tetel}
+
+\begin{proof}
+Legyen $I\neq 0$ ideál. Tekintsük az
+\[
+  S=\{v(x)\mid 0\neq x\in I\}\subseteq \NN
+\]
+halmazt. Ez nem üres, ezért van legkisebb eleme, mondjuk $n$. Válasszunk
+$a\in I$ elemet $v(a)=n$ értékkel. Ekkor $a=u\pi^n$ valamely
+$u\in R^\times$ egységgel, tehát $(a)=(\pi^n)$.
+
+Mivel $a\in I$, kapjuk, hogy $(\pi^n)\subseteq I$. Másrészt minden
+$x\in I$ esetén $v(x)\geq n$, tehát $x$ osztható $\pi^n$-nel, vagyis
+$x\in(\pi^n)$. Így $I=(\pi^n)$. Az $n$ egyértelmű, mert
+$(\pi^n)=(\pi^m)$ esetén az ideálok nem nulla elemeinek minimális
+értéke egyszerre $n$ és $m$.
+\end{proof}
+
+\begin{kovetkezmeny}
+Egy DVR prímideáljai pontosan $(0)$ és $\mm$. Következésképpen $\dim R=1$.
+\end{kovetkezmeny}
+
+\begin{proof}
+Legyen $\pp\neq (0)$ prímideál. Az előző tétel szerint
+$\pp=(\pi^n)$ valamely $n\geq 1$ esetén. Mivel $\pi^n\in\pp$ és
+$\pp$ prímideál, $\pi\in\pp$, tehát $\mm=(\pi)\subseteq\pp$. Mivel
+$\mm$ maximális, $\pp=\mm$.
+\end{proof}
+
+\begin{kovetkezmeny}
+Egy DVR egészzárt, noether, egydimenziós lokális integritási
+tartomány.
+\end{kovetkezmeny}
+
+\begin{proof}
+Az egészzártság minden értékelésgyűrűre igaz. A noetherség és
+az egydimenziósság az előző tételekből következik.
+\end{proof}
+
+\subsection{Ekvivalens jellemzések}
+
+\begin{tetel}[DVR-ek karakterizációja]
+Legyen $R$ noether lokális integritási tartomány, amely nem test, és
+legyen $\mm$ a maximális ideálja. Ekkor az alábbiak ekvivalensek:
+\begin{enumerate}
+  \item $R$ diszkrét értékelésgyűrű;
+  \item $R$ lokális főideálgyűrű;
+  \item $\mm$ főideál, és minden $0\neq x\in R$ egyértelműen
+        $x=u\pi^n$ alakú, ahol $u\in R^\times$, $n\geq 0$;
+  \item $R$ egydimenziós és egészzárt.
+\end{enumerate}
+\end{tetel}
+
+\begin{proof}
+Az $(1)\Rightarrow(2)$ implikációt az ideálokról szóló tétel adja.
+Az $(2)\Rightarrow(3)$ világos: ha $R$ lokális főideálgyűrű és nem
+test, akkor a maximális ideál $\mm=(\pi)$ valamely nem nulla
+nemegységre. Ha $0\neq x\in R$, akkor $x$ valamely legnagyobb
+$n\geq 0$ kitevőre $\mm^n$-ben van. Ilyen $n$ létezik, mert
+$\bigcap_{n\geq 0}\mm^n=0$ a Krull-féle metszettétel miatt. Ekkor
+$x=\pi^n u$ és $u\notin\mm$, tehát $u$ egység.
+
+A $(3)\Rightarrow(1)$ implikációhoz legyen $K=\Frac(R)$. Ha
+$0\neq z\in K$, írjuk $z=x/y$ alakban $x,y\in R\setminus\{0\}$. A
+feltétel miatt
+\[
+  x=u\pi^m,\qquad y=w\pi^n
+\]
+egységekkel, ezért
+\[
+  z=(uw^{-1})\pi^{m-n}.
+\]
+Definiáljuk $v(z)=m-n$. Az egyértelmű felbontás miatt ez jól
+definiált, és azonnal teljesíti
+$v(zz')=v(z)+v(z')$, valamint
+$v(z+z')\geq\min\{v(z),v(z')\}$. Ekkor
+\[
+  R=\{z\in K\mid v(z)\geq 0\},
+\]
+tehát $R$ DVR.
+
+Az $(1)\Rightarrow(4)$ már következményként szerepelt.
+
+Végül bizonyítjuk a $(4)\Rightarrow(3)$ irányt. Ez a karakterizáció
+legfontosabb része. Válasszunk $0\neq a\in\mm$ elemet. Mivel
+$R$ egydimenziós noether lokális integritási tartomány, az $R/(a)$ gyűrű
+lokális artin, ezért létezik $n\geq 1$ úgy, hogy
+\[
+  \mm^n\subseteq (a).
+\]
+Válasszuk $n$-t minimálisnak, és válasszunk
+$b\in\mm^{n-1}$ elemet úgy, hogy $b\notin(a)$. Ekkor
+$\mm b\subseteq(a)$, tehát ha $x=b/a\in K$, akkor $x\notin R$, de
+$x\mm\subseteq R$.
+
+Megmutatjuk, hogy $x\mm=R$. Ha $x\mm\subseteq\mm$ lenne, akkor a
+végesen generált $\mm$ ideál stabil lenne az $x$-szel való szorzásra.
+A determinánstrükk szerint ekkor $x$ egész lenne $R$ fölött.
+Mivel $R$ egészzárt, ebből $x\in R$ következne, ellentétben
+$b\notin(a)$ választásával. Tehát $x\mm\nsubseteq\mm$, és mivel $R$
+lokális, $x\mm$ tartalmaz egységet. Így $x\mm=R$.
+
+Ekkor létezik $\pi\in\mm$, amelyre $x\pi=1$. Ha $y\in\mm$, akkor
+$xy\in R$, és
+\[
+  y=(xy)\pi\in(\pi).
+\]
+Tehát $\mm=(\pi)$ főideál. A felbontás
+$0\neq r=u\pi^m$ alakban ismét a Krull-féle metszettételből adódik:
+van legnagyobb $m$ úgy, hogy $r\in\mm^m$, és ekkor
+$r\in(\pi^m)$, de $r\notin(\pi^{m+1})$, tehát $r=u\pi^m$ egy
+$u\notin\mm$ egységgel.
+\end{proof}
+
+\begin{megjegyzes}
+A tétel görbékhez leginkább használt alakja a következő: egy
+egydimenziós noether lokális integritási tartomány pontosan akkor DVR, ha
+egészzárt. Másképpen: normális görbén a zárt pontok lokális
+gyűrűi DVR-ek.
+\end{megjegyzes}
+
+\section{Számolás DVR-ben}
+
+\subsection{Rend, zérus és pólus}
+
+Legyen $R$ DVR hányadosteste $K$, uniformizálója $\pi$, normalizált
+értékelése $v$. Egy $f\in K^\times$ elemre
+\[
+  f=u\pi^n,\qquad u\in R^\times,\quad n\in\ZZ.
+\]
+Az $n=v(f)$ egész számot az $f$ \emph{rendjének} nevezzük.
+
+\begin{itemize}
+  \item Ha $v(f)>0$, akkor $f$ zérusa van az adott helyen, rendje
+        $v(f)$.
+  \item Ha $v(f)=0$, akkor $f$ reguláris és nem tűnik el az adott
+        helyen.
+  \item Ha $v(f)<0$, akkor $f$ pólusa van az adott helyen, pólusrendje
+        $-v(f)$.
+\end{itemize}
+
+\begin{allitas}
+Legyen $R$ DVR, $\pi$ uniformizáló, és $0\neq f\in R$. Ekkor
+\[
+  \length_R(R/(f))=v(f).
+\]
+\end{allitas}
+
+\begin{proof}
+Írjuk $f=u\pi^n$ alakban, ahol $u$ egység. Ekkor
+$(f)=(\pi^n)$, ezért elég $R/(\pi^n)$ hosszát kiszámítani. A lánc
+\[
+  R\supset(\pi)\supset(\pi^2)\supset\cdots\supset(\pi^n)\supset 0
+\]
+$R/(\pi^n)$ kompozíciósorát adja, és az egymást követő faktorok
+mind izomorfak $R/(\pi)$-vel. Így a hossz $n=v(f)$.
+\end{proof}
+
+\subsection{Példák}
+
+\begin{pelda}[$p$-adikus rend a racionális számokon]
+Legyen $p$ prímszám. Minden $0\neq x\in\mathbb Q$ egyértelműen írható
+\[
+  x=p^n\frac{a}{b},
+\]
+ahol $n\in\ZZ$, $a,b\in\ZZ$, és $p\nmid a,b$. Ekkor
+$v_p(x)=n$ diszkrét értékelés. Értékelésgyűrűje
+\[
+  \OO_{v_p}=\left\{\frac{a}{b}\in\mathbb Q\mid p\nmid b\right\}
+  =\ZZ_{(p)},
+\]
+maximális ideálja pedig $p\ZZ_{(p)}$.
+\end{pelda}
+
+\begin{pelda}[$t$-adikus rend]
+Legyen $k$ test. A $k(t)$ racionális függvénytestben a $t=0$ pontbeli
+rend
+\[
+  v_t\left(t^n\frac{f(t)}{g(t)}\right)=n,
+  \qquad f(0)g(0)\neq 0
+\]
+diszkrét értékelés. Értékelésgyűrűje $k[t]_{(t)}$, maximális ideálja
+$(t)$.
+\end{pelda}
+
+\begin{pelda}[Formális hatványsorok]\leavevmode\par
+A $k[[t]]$ formális hatványsorgyűrű DVR. Uniformizálója $t$, és
+minden nem nulla hatványsor egyértelműen
+\[
+  a_n t^n+a_{n+1}t^{n+1}+\cdots
+  =t^n(a_n+a_{n+1}t+\cdots)
+\]
+alakú, ahol $a_n\neq 0$, a zárójelben álló hatványsor pedig egység.
+A hányadostest $k((t))$, a Laurent-sorok teste.
+\end{pelda}
+
+\end{document}
